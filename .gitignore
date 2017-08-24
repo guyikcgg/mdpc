@@ -1,0 +1,13 @@
+doc
+datasets
+*#
+*~
+.tags
+*.bib.bak
+*.bib.sav
+*.png
+*.svg
+*.eps
+
+.Rproj.user
+doc
