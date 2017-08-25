@@ -47,6 +47,35 @@ rownames(ks.test.results.pn)[ks.test.results.pn>0.1]
 ## In conclusion: having the same distribution for positive and negative is not very informative...
 ## We will drop every variable getting 0 score in chi.squared test.
 
+# Drop irrelevant numeric attributes
+drop.attributes = 
+  rownames(weights.chi.squared)[weights.chi.squared == 0]
+drop.attributes = which(names(data.numeric) %in% drop.attributes)
+
+data.numeric.simplified = 
+  data.numeric[, -drop.attributes]
+
+
+
+# Look for redundant attributes
+## Check correlation amongst variables
+correlations = cor(data.numeric)
+drop.attributes = c(
+  drop.attributes,
+  findCorrelation(correlations, cutoff = 0.8)
+)
+data.numeric.simplified = 
+  data.numeric[, -unique(drop.attributes)]
+
+
+
+
+
+stop()
+
+
+
+
 weights.correlation.linear = FSelector::linear.correlation(data.numeric)
 weights.correlation.linear = 
   weights.correlation.linear[order(weights.correlation.linear, decreasing = T), , drop = F]
@@ -70,9 +99,6 @@ weights.oneR = weights.oneR[order(weights.oneR, decreasing = F), , drop = F]
 
 
 
-# Look for redundant attributes
-## Check correlation amongst variables
-correlations = cor(data.numeric)
-(sum(abs(correlations) > 0.8) - 41)/2
 
-which((abs(correlations) > 0.8) & (abs(correlations) < 1), arr.ind = T)
+
+
