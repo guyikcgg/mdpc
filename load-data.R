@@ -11,7 +11,11 @@ library(utils)
 library(stats)
 
 
-# Load traning data and test data
+# Load the complete dataset
+data = read.csv("data/datcom2016.csv")
+
+
+# Load traning and test data
 data.tra    = list()  # Training data
 data.tra.cl = list()  #  |-> Class
 data.tra.dt = list()  #  \-> Data
@@ -42,6 +46,16 @@ for (i in 1:10) {
     }
   }
 }
+
+
+# Get a sample of the data (one fold is 10%, already many points)
+data.sample = data.tst[[1]]
+
+# Separate data into numeric and factor (useful for visualization)
+data.numeric = data[,sapply(data, class) != "factor"]
+data.factor  = data[,sapply(data, class) == "factor"]
+data.sample.numeric = data.sample[,sapply(data, class) != "factor"]
+data.sample.factor  = data.sample[,sapply(data, class) == "factor"]
 
 # Remove dummy variables
 rm(i, j, filename, x)
