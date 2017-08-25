@@ -8,6 +8,6 @@ datasets
 *.png
 *.svg
 *.eps
-
+.RData
 .Rproj.user
 doc
