@@ -1,3 +1,11 @@
+################################################################
+#      Mineria de Datos: Preprocesamiento y Clasificacion      #
+#                                                              #
+# FILE: initial-visualization.R                                #
+#                                                              #
+# (C) Cristian González Guerrero                               #
+################################################################
+
 
 # Load required libraries
 library(utils)
@@ -14,6 +22,13 @@ set.seed(1)
 
 # Get 10% of the data (already many points)
 data.sample = data[sample(1:(0.01*nrow(data))), ]
+
+
+# Separate data in numeric and factor
+data.numeric = data[,sapply(data, class) != "factor"]
+data.factor  = data[,sapply(data, class) == "factor"]
+data.sample.numeric = data.sample[,sapply(data, class) != "factor"]
+data.sample.factor  = data.sample[,sapply(data, class) == "factor"]
 
 
 # Visualize the structure of the data
@@ -33,12 +48,6 @@ as.data.frame(colSums(is.na(data)))
 
 ## There are no missing values
 
-
-# Separate data in numeric and factor
-data.numeric = data[,sapply(data, class) != "factor"]
-data.factor  = data[,sapply(data, class) == "factor"]
-data.sample.numeric = data.sample[,sapply(data, class) != "factor"]
-data.sample.factor  = data.sample[,sapply(data, class) == "factor"]
 
 # Plot numeric data
 ## Distributions
@@ -68,24 +77,14 @@ for (i in 1:(ncol(data.numeric)-1)) {
   }
 }
 
-
 sum(ks.test.results>0.20, na.rm = T)
-## There are 3 variables that can be removed without any other consideration
-
 sum(ks.test.results>0.05, na.rm = T)
-## There is 1 additional variable that could surely be removed
-
 sum(ks.test.results>0.01, na.rm = T)
-## There are 2 additional variable that might be removed
 
 
-## Since there are many variables and KS test is very restrictive, 
-## we are going to remove the 6 variables. But the correlations
-## will be checked before.
-
+# Check correlation amongst variables
 correlations = cor(data.numeric)
 (sum(abs(correlations) > 0.8) - 41)/2
-
 
 
 which(ks.test.results>0.20, arr.ind = T)
