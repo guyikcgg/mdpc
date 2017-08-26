@@ -11,6 +11,7 @@ library(utils)
 library(ggplot2)
 library(reshape)
 library(FSelector)
+library(caret)
 
 # Load the data
 source("load-data.R")
@@ -47,14 +48,10 @@ rownames(ks.test.results.pn)[ks.test.results.pn>0.1]
 ## In conclusion: having the same distribution for positive and negative is not very informative...
 ## We will drop every variable getting 0 score in chi.squared test.
 
-# Drop irrelevant numeric attributes
+# Drop completely irrelevant numeric attributes
 drop.attributes = 
   rownames(weights.chi.squared)[weights.chi.squared == 0]
 drop.attributes = which(names(data.numeric) %in% drop.attributes)
-
-data.numeric.simplified = 
-  data.numeric[, -drop.attributes]
-
 
 
 # Look for redundant attributes
@@ -64,9 +61,12 @@ drop.attributes = c(
   drop.attributes,
   findCorrelation(correlations, cutoff = 0.8)
 )
-data.numeric.simplified = 
-  data.numeric[, -unique(drop.attributes)]
 
+# Drop the attributes
+drop.attributes = unique(drop.attributes)
+print(paste("Dropping", length(drop.attributes), "attributes..."))
+data.numeric.simplified = 
+  data.numeric[, -drop.attributes]
 
 
 
