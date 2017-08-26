@@ -66,3 +66,8 @@ new.proportion[2]/new.proportion[1]
 old.proportion[2]/old.proportion[1]
 ## Proportions are very similar, i.e. the removal of registers is not conditioned by the class
 ## (it could be thought that the minoritary class would be selected for removals)
+
+
+# Analyze the percentage of removed registers
+1 - nrow(my.data.10.clean) / nrow(my.data)
+## 17.5% of the registers have been removed
