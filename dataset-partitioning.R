@@ -39,10 +39,6 @@ data.test = function(i) {
 }
 
 # Save the data (so it can be loaded afterwards)
-for (i in 1:10) {
-  tra = data.train(i)
-  tst = data.test(i)
-  
-  write.csv(tra, paste("data/datcom2016-10-", i, "tra.csv", sep = ""))
-  write.csv(tst, paste("data/datcom2016-10-", i, "tst.csv", sep = ""))
+for (k in 1:10) {
+  write.csv(split_up[[k]], paste("data/datcom2016-10-", k, "-fold.csv", sep = ""))
 }
