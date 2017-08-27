@@ -44,7 +44,7 @@ summary(data)
 ggplot(data) +
   geom_bar(aes(class, fill = class))
 
-## We are facing an unbalanced problem
+## We are facing an imbalanced problem
 
 
 # Check for missing values
@@ -76,11 +76,11 @@ ggplot(myData) +
 ks.test(data$PredCN_r1, data$PredCN_r2)
 ## These two attributes may have the same distribution.
 ks.test(
-  subset(data, subset = class == "positive")$PredCN_r1, 
+  subset(data, subset = class == "positive")$PredCN_r1,
   subset(data, subset = class == "positive")$PredCN_r2
 )
 ks.test(
-  subset(data, subset = class == "negative")$PredCN_r1, 
+  subset(data, subset = class == "negative")$PredCN_r1,
   subset(data, subset = class == "negative")$PredCN_r2
 )
 ## Indeed, their relationship to positive and negative classes
@@ -98,12 +98,12 @@ ggplot(data) + geom_bar(aes(class, fill = as.factor(PredCN_r2)))
 ## They do seem to hold the same information.
 cor(data$PredCN_r1, data$PredCN_r2)
 ## Nevertheless, the two variables are not correlated...
-ggplot(data) + 
+ggplot(data) +
   geom_jitter(aes(PredCN_r1, PredCN_r1, color = class), alpha = 0.1)
-ggplot(data) + 
+ggplot(data) +
   geom_jitter(aes(PredCN_r1, PredCN_r2, color = class), alpha = 0.1)
 ## And that is the most important part, because they are independent,
-## but they inform very well about the class. 
+## but they inform very well about the class.
 ## Having the two variables makes a great decission boundary,
 ## so none of them should be deleted.
 ## Conclusion: same distribution does not mean the variables should be removed...
