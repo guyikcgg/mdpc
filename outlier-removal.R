@@ -57,13 +57,14 @@ length(MCD.outliers)
 
 # Remove these outliers from the data
 my.data.10.clean = my.data.10[-MCD.outliers, ]
+my.data.10.clean.cl = my.data.class[-MCD.outliers]
 
 # Check that the removal of outliers is independent to the class the data come from
-new.proportion = table(my.data.class[-MCD.outliers])
+new.proportion = table(my.data.10.clean.cl)
 old.proportion = table(data$class)
 
-new.proportion[2]/new.proportion[1]
-old.proportion[2]/old.proportion[1]
+prop.table(new.proportion)
+prop.table(old.proportion)
 ## Proportions are very similar, i.e. the removal of registers is not conditioned by the class
 ## (it could be thought that the minoritary class would be selected for removals)
 
