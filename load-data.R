@@ -13,7 +13,7 @@ library(stats)
 
 # Load the complete dataset
 dataset = read.csv("data/datcom2016.csv")
-
+names(dataset)[1:50] = paste("X", 1:50, sep = "")
 
 # Load the 10-folds
 split_up    = list()  # The k-folds (same to dataset.test)
@@ -28,6 +28,7 @@ for (k in 1:10) {
   x = read.csv(filename)
   rownames(x) = x$X
   x = x[,-1]
+  names(x)[1:50] = paste("X", 1:50, sep = "")
 
   split_up[[k]] = x
 }
@@ -51,7 +52,12 @@ dataset.tst.cl = dataset.tst$class   #  |-> Class
 dataset.tst.dt = dataset.tst[, -50]  #  \-> Data
 
 # Separate data into numeric and factor (useful for visualization)
-dataset.numeric = dataset.tra[,sapply(dataset, class) != "factor"]
+dataset.numeric.dt = dataset.tra[,sapply(dataset, class) != "factor"]
+dataset.numeric.cl = dataset.tra.cl
+dataset.numeric = cbind(
+  dataset.numeric.dt,
+  class = dataset.numeric.cl
+)
 dataset.factor  = dataset.tra[,sapply(dataset, class) == "factor"]
 
 # Remove dummy variables
