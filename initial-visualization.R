@@ -51,8 +51,10 @@ summary(dataset)
 
 ## There are too many variables to understand at once. Let's do it
 ## little by little.
-### MISSING!! ###
 
+# Frequency of each class
+table(dataset$class)
+prop.table(table(dataset$class))
 
 # Plot frequency of each class
 ggplot(dataset) +
@@ -62,14 +64,23 @@ ggplot(dataset) +
 
 
 # Check for missing values
-as.data.frame(colSums(is.na(dataset)))
+data.frame(missing.values = colSums(is.na(dataset)))
 
 ## There are no missing values
 
-dataset.numeric = dataset[,sapply(dataset, class) != "factor"]
+
+
+
+
+
+
+
+
+
 
 # Plot numeric data
 ## Distributions
+dataset.numeric = dataset[,sapply(dataset, class) != "factor"]
 myData = melt.data.frame(
   cbind(dataset.numeric, class = dataset$class)
 )
