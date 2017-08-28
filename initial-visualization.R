@@ -12,28 +12,42 @@ library(utils)
 library(ggplot2)
 library(reshape)
 
-# Load the data
-source("load-data.R")
+# Load the dataset
+dataset = read.csv("data/datcom2016.csv")
 
 # Set the random seed in order to be able to reproduce the results
 set.seed(1)
 
 
-
-
 # Visualize the structure of the data
-dim(data)
-str(data)
+dim(dataset)
 
-sum(sapply(data, class) == "factor") -1
-sum(sapply(data, class) == "integer")
-sum(sapply(data, class) == "numeric")
+data.types = sapply(dataset[, -51], class)
+table(data.types)
 ## Data contains 20000 registers from 50 attributes plus a class variable.
 ## 9 of the attributes are factors, whist the remaining 41 are numeric (
 ## 22 of which are integer, the other 19 being continous variables)
 
-# Get a summary of the data
-summary(data)
+
+# Build a summary table for the document
+mt = matrix(nrow =50, ncol = 4)
+mt[,1] = names(data.types)
+mt[,2] = data.types
+mt[,4] = paste("X", 1:50, sep ="")
+for (i in 1:50) {
+  if (data.types[i] == "factor") {
+    mt[i,3] = paste("{", paste(levels(dataset[,i]), collapse = ", "), "}", sep = "")
+  } else if (data.types[i] == "numeric") {
+    mt[i,3] = sprintf("[%.2f, %.2f]", min(dataset[,i]), max(dataset[,i]))
+  } else {
+    mt[i,3] = sprintf("[%d, %d]", min(dataset[,i]), max(dataset[,i]))
+  }
+}
+
+
+# Get additional summary of the data
+str(dataset)
+summary(dataset)
 
 ## There are too many variables to understand at once. Let's do it
 ## little by little.
@@ -41,22 +55,23 @@ summary(data)
 
 
 # Plot frequency of each class
-ggplot(data) +
+ggplot(dataset) +
   geom_bar(aes(class, fill = class))
 
 ## We are facing an imbalanced problem
 
 
 # Check for missing values
-as.data.frame(colSums(is.na(data)))
+as.data.frame(colSums(is.na(dataset)))
 
 ## There are no missing values
 
+dataset.numeric = dataset[,sapply(dataset, class) != "factor"]
 
 # Plot numeric data
 ## Distributions
 myData = melt.data.frame(
-  cbind(data.numeric, class = data$class)
+  cbind(dataset.numeric, class = dataset$class)
 )
 ## Density (relative to the class)
 ggplot(myData) +
@@ -73,19 +88,19 @@ ggplot(myData) +
 # ATTRIBUTE-SELECTION APPROACH
 
 # Can attributes with the same distribution be informative?
-ks.test(data$PredCN_r1, data$PredCN_r2)
+ks.test(dataset$PredCN_r1, dataset$PredCN_r2)
 ## These two attributes may have the same distribution.
 ks.test(
-  subset(data, subset = class == "positive")$PredCN_r1,
-  subset(data, subset = class == "positive")$PredCN_r2
+  subset(dataset, subset = class == "positive")$PredCN_r1,
+  subset(dataset, subset = class == "positive")$PredCN_r2
 )
 ks.test(
-  subset(data, subset = class == "negative")$PredCN_r1,
-  subset(data, subset = class == "negative")$PredCN_r2
+  subset(dataset, subset = class == "negative")$PredCN_r1,
+  subset(dataset, subset = class == "negative")$PredCN_r2
 )
 ## Indeed, their relationship to positive and negative classes
 ## seem to be the same.
-myData = subset(data, select = c(PredCN_r1, PredCN_r2, class))
+myData = subset(dataset, select = c(PredCN_r1, PredCN_r2, class))
 myData = melt(myData)
 ggplot(myData) +
   geom_density(aes(value)) +
@@ -93,14 +108,14 @@ ggplot(myData) +
   facet_wrap(~variable, ncol = 1)
 ## It could be thought that one of them could be redundant, thus
 ## being appropriate to omit it.
-ggplot(data) + geom_bar(aes(class, fill = as.factor(PredCN_r1)))
-ggplot(data) + geom_bar(aes(class, fill = as.factor(PredCN_r2)))
+ggplot(dataset) + geom_bar(aes(class, fill = as.factor(PredCN_r1)))
+ggplot(dataset) + geom_bar(aes(class, fill = as.factor(PredCN_r2)))
 ## They do seem to hold the same information.
-cor(data$PredCN_r1, data$PredCN_r2)
+cor(dataset$PredCN_r1, dataset$PredCN_r2)
 ## Nevertheless, the two variables are not correlated...
-ggplot(data) +
+ggplot(dataset) +
   geom_jitter(aes(PredCN_r1, PredCN_r1, color = class), alpha = 0.1)
-ggplot(data) +
+ggplot(dataset) +
   geom_jitter(aes(PredCN_r1, PredCN_r2, color = class), alpha = 0.1)
 ## And that is the most important part, because they are independent,
 ## but they inform very well about the class.
