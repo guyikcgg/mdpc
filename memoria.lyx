@@ -1,0 +1,579 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\begin_preamble
+\usepackage[titletoc]{appendix}
+\end_preamble
+\use_default_options true
+\maintain_unincluded_children false
+\language spanish
+\language_package default
+\inputencoding utf8
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "tgcursor" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_title "Trabajo Teórico/Práctico Integrador"
+\pdf_author "Cristian G Guerrero"
+\pdf_subject "Introducción a la Ciencia de Datos"
+\pdf_keywords "datascience, ugr, "
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\branch Locuras
+\selected 0
+\filename_suffix 0
+\color #faf0e6
+\end_branch
+\branch Source Code
+\selected 1
+\filename_suffix 0
+\color #d7faf8
+\end_branch
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 3cm
+\topmargin 3cm
+\rightmargin 3cm
+\bottommargin 3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language french
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\listings_params "language=R,backgroundcolor={\color[rgb]{0.96,0.96,0.96}},basicstyle={\ttfamily\small},keywordstyle={\color[rgb]{0,0,0.8}\ttfamily},stringstyle={\color[rgb]{0.01,0.42,0.03}\ttfamily},commentstyle={\color[rgb]{0.3,0.53,0.42}\ttfamily},numbers=left,numberstyle={\tiny \color{black}},numbersep=9pt,literate={{á}{{\'a}}1{é}{{\'e}}1{í}{{\'i}}1{ó}{{\'o}}1{ú}{{\'u}}1{Á}{{\'A}}1{É}{{\'E}}1{Í}{{\'I}}1{Ó}{{\'O}}1{Ú}{{\'U}}1}"
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Minería de Datos: Preprocesamiento y Clasificación
+\begin_inset Newline newline
+\end_inset
+
+Memoria de trabajo
+\end_layout
+
+\begin_layout Author
+Cristian González Guerrero
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introducción
+\end_layout
+
+\begin_layout Standard
+Esta es la memoria del trabajo final de la asignatura 
+\emph on
+Minería de Datos: Preprocesamiento y Clasificación
+\emph default
+, impartida en el 
+\emph on
+Máster en Ciencia de Datos e Ingeniería de Computadores
+\emph default
+ (DATCOM).
+ Dicho trabajo consiste en la realización de las tareas propias de la minería
+ de datos en el ámbito del aprendizaje supervisado.
+ Esto se materializa en la aplicación de las técnicas de preprocesamiento
+ y clasificación adquiridas en la asignatura a un conjunto de datos de gran
+ tamaño propuesto por los profesores.
+\end_layout
+
+\begin_layout Standard
+La realización de este trabajo se ha llevado a cabo usando 
+\emph on
+RStudio
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "RStudio2017,racine2012rstudio"
+
+\end_inset
+
+, 
+\emph on
+en su
+\emph default
+ 
+\emph on
+versión
+\emph default
+ 
+\emph on
+0.99.903
+\emph default
+ - 
+\emph on
+R version 3.3.2 (2016-10-31)
+\emph default
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ihaka1996r"
+
+\end_inset
+
+.
+ La mayor parte de los gráficos han sido generados usando 
+\emph on
+ggplot2
+\emph default
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ggplot2,9780387981406"
+
+\end_inset
+
+
+\emph on
+, en su versión 2.2.1
+\emph default
+.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Citar caret (y dependencias), noise filters, outliers, 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Este trabajo, realizado de forma original por Cristian González Guerrero,
+ se presenta para su valoración en la evaluación extraordinaria de Septiembre
+ de 2017.
+\end_layout
+
+\begin_layout Section
+Presentación y visualización de los datos
+\end_layout
+
+\begin_layout Section
+Preprocesamiento
+\end_layout
+
+\begin_layout Subsection
+Particionado del conjunto de datos
+\end_layout
+
+\begin_layout Subsection
+Imputación de valores perdidos
+\end_layout
+
+\begin_layout Subsection
+Detección de datos anómalos
+\end_layout
+
+\begin_layout Standard
+Se eliminarán, puesto que el conjunto de datos es muy grande y nos lo podemos
+ permitir.
+\end_layout
+
+\begin_layout Subsubsection
+Datos anómalos en una variable
+\end_layout
+
+\begin_layout Subsubsection
+Datos que no pertenecen a la distribución normal de los datos
+\end_layout
+
+\begin_layout Standard
+En ambos casos hay que verificar que la proporción de los datos no hay cambiado
+ (tal vez la clase minoritaria produce valores extremos en alguna variable,
+ lo cuál sería información muy valiosa que no queremos eliminar).
+\end_layout
+
+\begin_layout Subsection
+Discretización de los datos
+\end_layout
+
+\begin_layout Subsection
+Selección de características
+\end_layout
+
+\begin_layout Subsubsection
+Aproximación filter
+\end_layout
+
+\begin_layout Paragraph
+Atributos irrelevantes
+\end_layout
+
+\begin_layout Paragraph
+Redundancias
+\end_layout
+
+\begin_layout Subsubsection
+Aproximación wrapper
+\end_layout
+
+\begin_layout Subsection
+Detección de ruido
+\end_layout
+
+\begin_layout Standard
+Problema: no balanceado!
+\end_layout
+
+\begin_layout Standard
+Eliminación de las instancias VS cambiar la clase
+\end_layout
+
+\begin_layout Section
+Clasificación
+\end_layout
+
+\begin_layout Subsection
+Elección de los algoritmos
+\end_layout
+
+\begin_layout Standard
+Árbol de decisión
+\end_layout
+
+\begin_layout Standard
+Random Forest
+\end_layout
+
+\begin_layout Standard
+SVM?
+\end_layout
+
+\begin_layout Subsection
+Comparación de resultados
+\end_layout
+
+\begin_layout Standard
+Analizar parámetros.
+ Analizar mejoras bagging, boosting, SMOTE.
+ Analizar curva ROC.
+ Comparar distintas medidas de performance (en particular, accuracy VS AUC).
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+btprint "btPrintAll"
+bibfiles "mdpc"
+options "bibtotoc,unsrt"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\start_of_appendix
+\begin_inset Branch Source Code
+status open
+
+\begin_layout Section
+Estructura y uso del código generado
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:appendix-analysis"
+
+\end_inset
+
+Código fuente: Particionado y visualización del conjunto de datos
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en el particionado de los datos
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "dataset-partitioning.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'dataset-partitioning.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en la adquisición de los datos
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "load-data.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'load-data.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en la visualización preliminar de los datos
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "initial-visualization.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'initial-visualization.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:appendix-preprocessing"
+
+\end_inset
+
+Código fuente: Preprocesamiento
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en la detección de valores anómalos
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "outlier-removal.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'outlier-removal.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en la discretización de atributos
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "src/regression/discretization.R"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'discretization.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado la selección de características
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "attribute-selection.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'attribute-selection.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Código fuente usado en la detección de ruido
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "noise-filter.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File noise-filter.R'
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:appendix-classification"
+
+\end_inset
+
+Código fuente: Clasificación
+\end_layout
+
+\begin_layout LyX-Code
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
