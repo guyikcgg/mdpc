@@ -3309,15 +3309,25 @@ IDEA Y MOTIVACIÓN (QUÉ SE VA A HACER Y QUÉ BENEFICIOS SE ESPERAN)
 
 \begin_layout Standard
 El principal objetivo de la detección de anomalías es identificar atributos
- que presentan valores extraños, que no se ajustan a la norma o a la tendencia
- general del conjunto.
+ que presentan valores extraños, es decir, que no se ajustan a la norma
+ o a la tendencia general del conjunto.
  Estos registros anómalos suelen representar errores en las medidas, por
  lo que deberán ser eliminados con el fin de evitar que interfieran con
  el resto de observaciones.
  No obstante, hay que tener en cuenta que estas anomalías pueden representar
  datos reales que presentan características extrañas.
- Este último caso deberá ser minuciosamente estudiado en el caso que nos
- ocupa, puesto que nos enfrentamos a un problema de clasificación no balanceada.
+ Este último caso deberá ser minuciosamente estudiado en el caso
+\begin_inset Note Note
+status collapsed
+
+\begin_layout Plain Layout
+caso caso...
+\end_layout
+
+\end_inset
+
+ que nos ocupa, puesto que nos enfrentamos a un problema de clasificación
+ no balanceada.
  Por este motivo, debemos cuidar que los registros de la clase minoritaria
  no sean eliminados por considerarse anómalos.
 \end_layout
@@ -3394,6 +3404,49 @@ Se eliminarán, puesto que el conjunto de datos es muy grande y nos lo podemos
 
 \end_layout
 
+\begin_layout Subsubsection
+Datos anómalos en una variable
+\end_layout
+
+\begin_layout Standard
+La detección de datos anómalos en una variable se ha llevado a cabo usando
+ la función 
+\family typewriter
+rm.outlier
+\family default
+ del paquete 
+\family typewriter
+outliers
+\family default
+.
+ Con esta función se ha analizado cada variable continua presente en el
+ dataset, eliminando los registros que presentaban valores anómalos.
+ El criterio por el cuál se ha decidido eliminar los registros anómalos
+ en vez de imputarles un valor promedio se basa en que nuestro conjunto
+ de datos cuenta con numerosas filas.
+ Por este motivo, la eliminación de alguna de ellas no supone una gran pérdida
+ de información, siendo preferible a imputar otro valor de cara a la detección
+ de anomalías en múltiples variables.
+ Además, la eliminación de filas puede ayudar a reducir el tamaño del conjunto
+ de datos, acelerando el proceso de entrenamiento en la fase de clasificación.
+\end_layout
+
+\begin_layout Standard
+Como puede observarse en la figura
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:outliers-univariate"
+
+\end_inset
+
+, la mayoría de anomalías detectadas están en los extremos de las distribuciones
+, como cabía esperar.
+\end_layout
+
 \begin_layout Standard
 \begin_inset Float figure
 wide false
@@ -3440,6 +3493,59 @@ Ejemplos de detección de anomalías en una variable.
 \end_inset
 
 
+\end_layout
+
+\begin_layout Subsubsection
+Datos que no se ajustan a la tendencia general de los datos
+\end_layout
+
+\begin_layout Standard
+La detección de datos anómalos en múltiples variables se ha realizado mediante
+ la función 
+\family typewriter
+uni.plot
+\family default
+ del paquete 
+\family typewriter
+mvoutlier
+\family default
+.
+ Para llevarla a cabo, ha sido necesario seleccionar 10 variables numéricas.
+ En este caso, se han elegido las 10 variables cuantitativas más representativas
+, según el test 
+\begin_inset Formula $\chi^{2}$
+\end_inset
+
+ de significancia con respecto a la clase proporcionado por la función 
+\family typewriter
+chi.squared
+\family default
+ del paquete 
+\family typewriter
+FSelector
+\family default
+.
+ Esta selección es necesaria, puesto que la función 
+\family typewriter
+uni.plot
+\family default
+ no admite más de diez atributos.
+\end_layout
+
+\begin_layout Standard
+Como puede observarse en la figura
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:outliers-multivariate"
+
+\end_inset
+
+, la mayoría de las anomalías detectadas se encuentran mayormente en los
+ bordes de las distribuciones.
 \end_layout
 
 \begin_layout Standard
@@ -3492,66 +3598,6 @@ Ejemplos de detección de anomalías en varias variables.
 
 \end_layout
 
-\begin_layout Subsubsection
-Datos anómalos en una variable
-\end_layout
-
-\begin_layout Standard
-La detección de datos anómalos en una variable se ha llevado a cabo usando
- la función 
-\family typewriter
-rm.outlier
-\family default
- del paquete 
-\family typewriter
-outliers
-\family default
-.
- Se eliminarán las filas en las que se detecte un valor anómalo en cualquiera
- de las variables.
- El criterio para decidir esto es que nuestro conjunto de datos cuenta con
- numerosas filas, por lo que la eliminación de alguna de ellas no supone
- una gran pérdida de información.
- En su lugar, la eliminación de filas puede ayudar a reducir el tamaño del
- conjunto de datos, acelerando el proceso de entrenamiento en la fase de
- clasificación.
-\end_layout
-
-\begin_layout Standard
-Como puede observarse en la figura
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:outliers-univariate"
-
-\end_inset
-
-, las anomalías detectadas están en los extremos de las distribuciones.
-\end_layout
-
-\begin_layout Subsubsection
-Datos que no se ajustan a la tendencia general de los datos
-\end_layout
-
-\begin_layout Standard
-Como puede observarse en la figura
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand ref
-reference "fig:outliers-multivariate"
-
-\end_inset
-
-, las anomalías detectadas se encuentran mayormente en los bordes de las
- distribuciones.
-\end_layout
-
 \begin_layout Standard
 \begin_inset Note Note
 status open
@@ -3565,10 +3611,181 @@ OTRAS CONSIDERACIONES
 
 \end_layout
 
+\begin_layout Subsubsection
+Análisis de la eliminación de anomalías
+\end_layout
+
 \begin_layout Standard
-En ambos casos hay que verificar que la proporción de los datos no hay cambiado
- (tal vez la clase minoritaria produce valores extremos en alguna variable,
- lo cuál sería información muy valiosa que no queremos eliminar).
+Una vez realizado el proceso de eliminación de registros anómalos es necesario
+ comprobar que la proporción de en la clase de salida no se haya visto modificad
+a.
+ Esto es crucial en clasificación no balanceada, puesto que los datos asociados
+ a la clase minoritaria podrían ser detectados como anómalos.
+ En particular, es muy interesante que los atributos asociados a la clase
+ minoritaria produzcan valores extremos, pues facilitaría la tarea de clasificac
+ión.
+\end_layout
+
+\begin_layout Standard
+En el caso que nos ocupa, la proporción de ocurrencias de cada clase no
+ se ha visto significativamente modificada, como puede observarse en la
+ tabla
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:outlier-frequency"
+
+\end_inset
+
+.
+ Algo que llama la atención es que se han eliminado alrededor del 
+\begin_inset Formula $17\%$
+\end_inset
+
+ de los registros, lo cuál puede afectar significativamente a la etapa de
+ clasificación.
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset Float table
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<column alignment="center" valignment="top">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Class
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $f_{i}$
+\end_inset
+
+ prior outlier elimination
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $f_{i}$
+\end_inset
+
+ after outlier elimination
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+positive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+25.0%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+24.19%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+negative
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+75.0%
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+75.81%
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "tab:outlier-frequency"
+
+\end_inset
+
+Frecuencias relativas de cada clase antes y después de la eliminación de
+ anomalías.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
