@@ -8,11 +8,15 @@
 
 # Load required libraries
 library(outliers)
+library(FSelector)
 library(mvoutlier)
 
-# Load data and select the most relevant attributes
-source("load-data.R")
-source("attribute-selection.R")
+# Visualization
+if (!exists("plot.enable")) {
+  plot.enable = F
+}
+
+set.seed(1)
 
 # A row will be considered an outlier if it presents an
 # anomaly on any variable or if it presents an anomalous
@@ -21,47 +25,90 @@ source("attribute-selection.R")
 # UNIVARIATE OUTLIERS
 
 # Remove univariate outliers (only from numeric data, not integers!)
-my.data = data.numeric.simplified
-removed.rows = 0
-my.selection = c()
-for (i in 1:ncol(data.numeric.simplified)) {
-  if(class(data.numeric.simplified[,i]) == "numeric") {
-    new.data     = rm.outlier(my.data[,i], fill = F)
-    my.selection = c(my.selection, which(!(my.data[,i] %in% new.data)))
-  }
+
+## Look for outliers in every column
+my.dataset.dt = dataset.numeric.dt[, sapply(dataset.numeric.dt, class) == "numeric"]
+my.dataset.cl = dataset.numeric.cl
+my.dataset    = cbind(my.dataset.dt, class = my.dataset.cl)
+removed.rows  = 0
+my.selection  = c()
+for (i in 1:ncol(my.dataset.dt)) {
+    new.data     = rm.outlier(my.dataset.dt[,i], fill = F)
+    my.selection = c(my.selection, which(!(my.dataset.dt[,i] %in% new.data)))
+    
+    if (plot.enable) {
+      # Visualize the removed outliers
+      print(
+        ggplot(my.dataset, aes_string(
+          (names(my.dataset)[i]),
+          color = "class")) +
+          geom_freqpoly(bins = 70) +
+          geom_freqpoly(data = dataset.numeric[my.selection, ], color = "#FFCC00", bins = 70)
+      )
+    }
+    
 }
 
-my.selection = unique(my.selection)
-my.data      = my.data[-my.selection, ]
-removed.rows = length(my.selection)
+## Get the rows containing outliers
+my.selection  = unique(my.selection)
+removed.rows  = length(my.selection)
+
+## Remove the rows containing outliers
+my.dataset    = my.dataset[-my.selection, ]
+my.dataset.cl = dataset.numeric.cl[-my.selection]
 
 print(paste("Removed", removed.rows, "rows containing univariate outliers"))
-my.data.class = data$class[-my.selection]
+
+
 
 # MULTIVARIATE OUTLIERS
 
-# Select the 10 most useful variables according to chi.squared test
-my.selection = names(data.numeric.simplified) %in% rownames(weights.chi.squared)[1:10]
-my.data.10 = my.data[,my.selection]
+# Remove multivariate outliers (from both numeric and integer)
 
-# Normalize the data
-my.data.10.scaled = scale(my.data.10)
+## Select the 10 most useful variables according to chi.squared test
+weights.chi.squared = chi.squared(class~., dataset.numeric)
+weights.chi.squared =
+  weights.chi.squared[order(weights.chi.squared, decreasing = T), , drop = F]
 
-# Get the multivariate outliers
+my.selection = names(dataset.numeric.dt) %in% rownames(weights.chi.squared)[1:10]
+my.dataset.10.dt = dataset.numeric.dt[,my.selection]
+my.dataset.10.cl = dataset.numeric.cl
+my.dataset.10    = cbind(my.dataset.10.dt, class = my.dataset.10.cl)
+
+## Normalize the data
+my.dataset.10.dt.scaled = scale(my.dataset.10.dt)
+
+## Get the multivariate outliers
 alpha.value = 0.05
-alpha.value = 1 - ( 1 - alpha.value) ^ (1 / nrow(my.data.10.scaled))
-mvoutlier.plot = uni.plot(my.data.10.scaled, symb = FALSE, alpha = alpha.value)
+alpha.value = 1 - ( 1 - alpha.value) ^ (1 / nrow(my.dataset.10.dt.scaled))
+mvoutlier.plot = uni.plot(my.dataset.10.dt.scaled, symb = FALSE, alpha = alpha.value)
 is.MCD.outlier = mvoutlier.plot$outliers
+
+## Get the rows containing outliers
 MCD.outliers = which(is.MCD.outlier)
-length(MCD.outliers)
+removed.rows = length(MCD.outliers)
 
-# Remove these outliers from the data
-my.data.10.clean = my.data.10[-MCD.outliers, ]
-my.data.10.clean.cl = my.data.class[-MCD.outliers]
+## Remove these outliers from the data
+my.dataset.10.clean.dt = my.dataset.10.dt[-MCD.outliers, ]
+my.dataset.10.clean.cl = my.dataset.10.cl[-MCD.outliers]
+my.dataset.10.clean = cbind(my.dataset.10.clean.dt, class = my.dataset.10.clean.cl)
 
-# Check that the removal of outliers is independent to the class the data come from
-new.proportion = table(my.data.10.clean.cl)
-old.proportion = table(data$class)
+print(paste("Removed", removed.rows, "rows containing multivariate outliers"))
+
+## Visualize removed outliers
+if (plot.enable) {
+  ggplot(my.dataset.10, aes(X1, X3, color = class)) + 
+    geom_point(alpha = 0.1) +
+    geom_point(data = my.dataset.10[MCD.outliers, ], alpha = 0.1, color = "#FFCC00")
+  ggplot(my.dataset.10, aes(X3, X40, color = class)) + 
+    geom_jitter(alpha = 0.1) +
+    geom_jitter(data = my.dataset.10[MCD.outliers, ], alpha = 0.1, color = "#FFCC00")
+}
+
+
+## Check that the removal of outliers is independent to the class the data come from
+new.proportion = table(my.dataset.10.clean.cl)
+old.proportion = table(dataset$class)
 
 prop.table(new.proportion)
 prop.table(old.proportion)
@@ -70,5 +117,5 @@ prop.table(old.proportion)
 
 
 # Analyze the percentage of removed registers
-1 - nrow(my.data.10.clean) / nrow(my.data)
-## 17.5% of the registers have been removed
+1 - nrow(my.dataset.10.clean) / nrow(my.dataset)
+## Around 17% of the registers have been removed
