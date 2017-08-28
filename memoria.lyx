@@ -3120,8 +3120,99 @@ El conjunto de datos proporcionado consta de 20000 instancias
 Preprocesamiento
 \end_layout
 
+\begin_layout Standard
+En esta sección se trata el preprocesamiento de los datos, con el objetivo
+ de conseguir unos datos de calidad que puedan servir de entrada a los algoritmo
+s de entrenamiento en la etapa de clasificación.
+ Los principales objetivos del preprocesamiento:
+\end_layout
+
+\begin_layout Enumerate
+Eliminar impurezas de los datos, recuperando información perdida, eliminando
+ ruido y atendiendo a las inconsistencias que puedan presentarse en los
+ mismos.
+\end_layout
+
+\begin_layout Enumerate
+Reducir el tamaño del conjunto de datos, seleccionando atributos relevantes,
+ eliminando registros duplicados y anomalías, discretizando variables o
+ seleccionando instancias.
+\end_layout
+
+\begin_layout Enumerate
+Obtener datos de calidad, que conduzcan a modelos de calidad.
+\end_layout
+
+\begin_layout Standard
+Estos tres objetivos serán tratados en los epígrafes siguientes.
+\end_layout
+
 \begin_layout Subsection
 Particionado del conjunto de datos
+\end_layout
+
+\begin_layout Standard
+En primer lugar, hay que tener en cuenta que los modelos aprendidos tendrán
+ que ser evaluados con datos que no hayan sido vistos previamente.
+ Para ello, se usarán datos distintos en la fase de aprendizaje y en la
+ fase de test.
+ Estos datos serán extraídos del conjunto de datos original usando la técnica
+ de validación cruzada 
+\emph on
+k-fold cross validation
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+En el caso que nos ocupa, se ha decidido realizar una partición del conjunto
+ de datos original en 10 particiones o 
+\emph on
+folds
+\emph default
+.
+ De este modo, se usarán 9 particiones como set de datos de entrenamiento
+ (
+\emph on
+training set
+\emph default
+) y la partición restante, como set de validación (
+\emph on
+test set
+\emph default
+).
+ Estas particiones serán guardadas en archivos CSV para asegurar la repetibilida
+d de los procesos que se realizan a continuación.
+\end_layout
+
+\begin_layout Standard
+Cabe mencionar que ciertas etapas del preprocesamiento deberán realizarse
+ exclusivamente sobre los datos de entrenamiento.
+ Por ejemplo, la eliminación de anomalías o de ruido son procesos que deben
+ realizarse exclusivamente en el 
+\emph on
+training set
+\emph default
+, ya que de lo contrario estaríamos falseando las medidas de 
+\emph on
+performance
+\emph default
+.
+ En cambio, la normalización de los datos o la selección de características
+ deberán efectuarse sobre todo el conjunto de datos.
+ 
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+No obstante, estas etapas serán realizadas teniendo en cuenta únicamente
+ el set de entrenamiento, aunque las Con el objetivo de dotar al proceso
+ de realismo, 
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
