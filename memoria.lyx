@@ -220,12 +220,13 @@ Presentación y visualización de los datos
 \end_layout
 
 \begin_layout Standard
-El conjunto de datos
-\emph on
- 
-\emph default
-proporcionado corresponde a un dataframe con una dimensión de 20000 filas
- y 51 columnas que no presentan valores omitidos.
+El conjunto de datos de trabajo ha sido proporcionado en el fichero 
+\family typewriter
+datcom2016.csv
+\family default
+.
+ Éste corresponde a un dataframe con una dimensión de 20000 filas y 51 columnas
+ que no presentan valores omitidos.
  Esto corresponde a 20000 muestras en las que se han medido 50 propiedades.
  Además, estos registros han sido clasificadas según la variable 
 \family typewriter
@@ -3152,6 +3153,19 @@ Particionado del conjunto de datos
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+IDEA Y MOTIVACIÓN (QUÉ SE VA A HACER Y QUÉ BENEFICIOS SE ESPERAN)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 En primer lugar, hay que tener en cuenta que los modelos aprendidos tendrán
  que ser evaluados con datos que no hayan sido vistos previamente.
  Para ello, se usarán datos distintos en la fase de aprendizaje y en la
@@ -3165,24 +3179,76 @@ k-fold cross validation
 \end_layout
 
 \begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+IMPLEMENTACIÓN Y JUSTIFICACIÓN (CÓMO SE HA DECIDIDO IMPLEMENTAR Y POR QUÉ)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 En el caso que nos ocupa, se ha decidido realizar una partición del conjunto
  de datos original en 10 particiones o 
 \emph on
 folds
 \emph default
 .
- De este modo, se usarán 9 particiones como set de datos de entrenamiento
- (
+ Este número es un valor bastante típico en los problemas de clasificación,
+ y permite tener una cantidad manejable de sets de datos.
+ De este modo, se usarán 9 particiones como set de entrenamiento (
 \emph on
 training set
 \emph default
-) y la partición restante, como set de validación (
+) y la partición restante como set de validación (
 \emph on
 test set
 \emph default
 ).
- Estas particiones serán guardadas en archivos CSV para asegurar la repetibilida
-d de los procesos que se realizan a continuación.
+ A la hora de evaluar los resultados de la clasificación se usarán 10 conjuntos
+ de entrenamiento y de validación distintos, basados en las particiones
+ previamente establecidas, tal y como especifica la técnica 
+\emph on
+k-fold cross validation
+\emph default
+.
+\end_layout
+
+\begin_layout Standard
+Para la creación de las 10 particiones mencionadas previamente se ha hecho
+ uso de la función 
+\family typewriter
+createFolds
+\family default
+, disponible con el paquete 
+\family typewriter
+caret
+\family default
+.
+ Esta función nos asegura que los datos estarán bien mezclados y que cada
+ partición contará con una proporción similar de instancias de cada una
+ de las clases.
+ Estas particiones han sido guardadas en archivos CSV para asegurar la repetibil
+idad de los procesos que se realizan a continuación.
+ Con el mismo propósito, se proporciona un script para cargar el set de
+ datos completo junto con estas particiones.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+OTRAS CONSIDERACIONES
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3219,8 +3285,39 @@ No obstante, estas etapas serán realizadas teniendo en cuenta únicamente
 Imputación de valores perdidos
 \end_layout
 
+\begin_layout Standard
+Puesto que el conjunto de datos proporcionado no presenta valores perdidos,
+ no será necesaria su imputación.
+\end_layout
+
 \begin_layout Subsection
 Detección de datos anómalos
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+IDEA Y MOTIVACIÓN (QUÉ SE VA A HACER Y QUÉ BENEFICIOS SE ESPERAN)
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+IMPLEMENTACIÓN Y JUSTIFICACIÓN (CÓMO SE HA DECIDIDO IMPLEMENTAR Y POR QUÉ)
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -3234,6 +3331,19 @@ Datos anómalos en una variable
 
 \begin_layout Subsubsection
 Datos que no pertenecen a la distribución normal de los datos
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+OTRAS CONSIDERACIONES
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
