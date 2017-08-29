@@ -281,7 +281,11 @@ X50
 
 \begin_layout Standard
 Al observar la frecuencia de cada clase, resulta evidente que nos encontramos
- ante un problema de clasificación binaria no balanceado (imbalanced).
+ ante un problema de clasificación binaria no balanceado (
+\emph on
+imbalanced
+\emph default
+).
  Como se muestra en la tabla
 \begin_inset space ~
 \end_inset
@@ -316,9 +320,16 @@ positive
  Esto, que a simple vista puede no parecer un problema, hará que el tratamiento
  de los datos tenga que hacerse con sumo cuidado, tanto en las etapas de
  preprocesamiento como en la clasificación.
- Entre las precauciones a tomar, habrá que tener en cuenta que el accuracy
+ Entre las precauciones a tomar, habrá que tener en cuenta que el 
+\emph on
+accuracy
+\emph default
  no será una buena medida en la clasificación, por lo que tendremos que
- usar otras medidas, como AUC (area under the curve).
+ usar otras medidas, como el AUC (
+\emph on
+area under the curve
+\emph default
+).
  Otra solución será usar un muestreo sobre la distribución para generar
  los modelos, o bien usar técnicas como bagging o boosting.
 \end_layout
@@ -3039,77 +3050,138 @@ Conteo de ocurrencias en la variable de salida.
 \end_layout
 
 \begin_layout Standard
-\begin_inset Note Note
+Las distribuciones de frecuencias de los atributos del conjunto de datos
+ se presenta en las figuras
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:visualization-nueric-distributions"
+
+\end_inset
+
+ y
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:visualization-factor-distributions"
+
+\end_inset
+
+.
+ Como puede observarse, hay variables cuya distribución depende fuertemente
+ de la clase, mientras que en otras, las distribuciones son muy parecidas.
+ Esta dependencia de la clase hace que algunas variables sean muy interesantes,
+ puesto que algunos de sus valores determinan en gran medida la clase de
+ pertenencia.
+ En cambio, las variables que presentan igual frecuencia para ambas clases
+ deberán ser eliminadas.
+ Este tema se trata en mayor profundidad en el epígrafe
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "subsec:feature-selection"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
 status open
 
 \begin_layout Plain Layout
-Las medidas estadísticas sobre la variable numérica 
-\family typewriter
-Size
-\family default
- pueden observarse en
-\begin_inset space ~
-\end_inset
 
-
-\begin_inset CommandInset ref
-LatexCommand formatted
-reference "tab:tae-numeric-variables-statistics"
-
-\end_inset
-
-.
- Junto a ellas, se han calculado los momentos estadísticos de las variables
- 
-\family typewriter
-Instructor
-\family default
- y 
-\family typewriter
-Course
-\family default
-, que, a pesar de ser categóricas, tienen asignados valores numéricos enteros.
- No obstante, esta representación numérica no es apropiada, ya que los números
- han sido dados de forma arbitraria y no tienen un significado concreto.
- Esto se pone de manifiesto en la figura
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand formatted
-reference "fig:tae-categorical-boxplot-distribution"
-
-\end_inset
-
-, en la que puede observarse que la distribución de estas variables no es
- normal, ni sigue ningún patrón conocido.
- Más bien se trata de unos puntos aleatorios, ya que cada instructor, o,
- equivalentemente cada curso, tendrá un número de asistentes determinado,
- independiente del número asignado al instructor o al curso.
- La figura
-\begin_inset space ~
-\end_inset
-
-
-\begin_inset CommandInset ref
-LatexCommand formatted
-reference "fig:tae-size-boxplot-distribution"
-
-\end_inset
-
-, en cambio, muestra la distribución de la variable 
-\family typewriter
-Size
-\family default
-.
- Esta variable tiene una distribución más cercana a la normal, aunque existen
- diferencias en función de la clase a la que pertenecen los datos.
- 
 \end_layout
 
 \begin_layout Plain Layout
-El conjunto de datos proporcionado consta de 20000 instancias 
+\align center
+\begin_inset Graphics
+	filename img/Rplot10.eps
+	lyxscale 50
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:visualization-nueric-distributions"
+
+\end_inset
+
+Distribuciones de frecuencias de las 40 primeras variables cuantitativas
+ del set de datos.
+ Los trazos en negro corresponden a la suma de las dos clases.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Rplot11.eps
+	lyxscale 50
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:visualization-factor-distributions"
+
+\end_inset
+
+Distribuciones de frecuencias de las variables cualitativas del set de datos.
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \end_inset
@@ -3149,6 +3221,12 @@ Estos tres objetivos serán tratados en los epígrafes siguientes.
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:partitioning"
+
+\end_inset
+
 Particionado del conjunto de datos
 \end_layout
 
@@ -3291,6 +3369,12 @@ Puesto que el conjunto de datos proporcionado no presenta valores perdidos,
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:outliers"
+
+\end_inset
+
 Detección de datos anómalos
 \end_layout
 
@@ -3789,10 +3873,22 @@ Frecuencias relativas de cada clase antes y después de la eliminación de
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:discretization"
+
+\end_inset
+
 Discretización de los datos
 \end_layout
 
 \begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "subsec:feature-selection"
+
+\end_inset
+
 Selección de características
 \end_layout
 
