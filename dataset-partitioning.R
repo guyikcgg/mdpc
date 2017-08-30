@@ -23,7 +23,13 @@ folds = createFolds(
 )
 
 # Get the folds from dataset
-split_up <- lapply(folds, function(ind, dat) dat[ind,], dat = dataset)
+split_up = lapply(
+  folds, 
+  function(ind, dat) {
+    dat[ind,]
+  },
+  dat = dataset
+)
 
 # Quick check for the structure
 unlist(lapply(split_up, nrow))
@@ -40,5 +46,8 @@ dataset.test = function(i) {
 
 # Save the data (so it can be loaded afterwards)
 for (k in 1:10) {
-  write.csv(split_up[[k]], paste("data/datcom2016-10-", k, "-fold.csv", sep = ""))
+  write.csv(
+    split_up[[k]], 
+    paste("data/datcom2016-10-", k, "-fold.csv", sep = "")
+  )
 }
