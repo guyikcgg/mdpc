@@ -80,6 +80,30 @@ subset.factor     = function(df) {
     df[,sapply(df, class) == "factor", drop = F]
   )
 }
+subset.num.dt = function(df) {
+  return(
+    df[,sapply(df, class) == "numeric", drop = F]
+  )
+}
+subset.num.cl = subset.numeric.cl
+subset.num    = function(df) {
+  return(cbind(
+    subset.num.dt(df),
+    class = df$class
+  ))
+}
+subset.int.dt = function(df) {
+  return(
+    df[,sapply(df, class) == "integer", drop = F]
+  )
+}
+subset.int.cl = subset.numeric.cl
+subset.int    = function(df) {
+  return(cbind(
+    subset.int.dt(df),
+    class = df$class
+  ))
+}
 
 # Remove temporal variables
 rm(filename, x)
