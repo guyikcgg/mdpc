@@ -8,11 +8,17 @@
 
 # Load required libraries
 library(discretization)
+library(reshape)
 library(ggplot2)
 
 # Visualization
 if (!exists("plot.enable")) {
   plot.enable = F
+}
+
+# Remove variables
+if (!exists("rm.variables")) {
+  rm.variables = F
 }
 
 # Set the random seed in order to be able to reproduce the results
@@ -22,6 +28,9 @@ set.seed(1)
 dataset.discretized = disc.Topdown(
   subset.numeric(dataset.tra.preprocessed)
 )
+
+# Give a proper name to output from this step
+dataset.tra.preprocessed.discretized = dataset.discretized$Disc.data
 
 # Plot the results
 if (plot.enable) {
@@ -77,30 +86,118 @@ if (plot.enable) {
     ) +
     facet_wrap(~variable, scales = "free", ncol = 2)
   
-  # Remove temporal variables
-  rm(
-    myData,
-    myCuts,
-    cuts.10,
-    my.selection,
-    my.dataset.10.discretized,
-    my.dataset.10.discretized.cl,
-    my.dataset.10.discretized.dt,
-    my.dataset.10,
-    my.dataset.10.cl,
-    my.dataset.10.dt,
-    weights.chi.squared
+  
+  # Discretization evaluation based on integer variables
+  ## Scatterplots before discretization
+  int.data         = 
+    subset.int.dt(dataset.tra.preprocessed)
+  int.data.discret = 
+    subset.int.dt(dataset.tra.preprocessed.discretized)
+  
+  weights.correlation.rank = rank.correlation(int.data)
+  weights.correlation.rank = 
+    weights.correlation.rank[order(weights.correlation.rank, decreasing = T), , drop = F]
+  
+  most.important.4 = rownames(weights.correlation.rank)[c(2:4, 8)]
+  
+  important.data.n = which(names(int.data) %in% most.important.4)
+  int.data.important = cbind(
+    int.data[,important.data.n], 
+    class = subset.int.cl(dataset.tra.preprocessed)
   )
+
+  myData1 = 
+    melt.data.frame(int.data.important, id.vars=c("X18", "class"))
+  myData2 = 
+    melt.data.frame(int.data.important, id.vars=c("X19", "class"))
+  myData3 = 
+    melt.data.frame(int.data.important, id.vars=c("X20", "class"))
+  myData4 = 
+    melt.data.frame(int.data.important, id.vars=c("X25", "class"))
+  myData1$variableX = "X18"
+  myData2$variableX = "X19"
+  myData3$variableX = "X20"
+  myData4$variableX = "X25"
+  names(myData1)[1] = "x"
+  names(myData2)[1] = "x"
+  names(myData3)[1] = "x"
+  names(myData4)[1] = "x"
+  myData = rbind(myData4, myData1, myData2, myData3)
+  
+  ggplot(myData, aes(x, value)) +
+    geom_jitter(aes(colour = class), alpha = 0.1) +
+    facet_grid(variableX~variable) +
+    xlab("") + ylab("")
+  
+  
+  ## Scatterplots after discretization
+  important.data.n = which(
+    names(int.data.discret)
+    %in%
+    most.important.4
+  )
+  int.data.important = cbind(
+    int.data.discret[,important.data.n],
+    class = subset.int.cl(dataset.tra.preprocessed)
+  )
+  
+  myData1 = 
+    melt.data.frame(int.data.important, id.vars=c("X18", "class"))
+  myData2 = 
+    melt.data.frame(int.data.important, id.vars=c("X19", "class"))
+  myData3 = 
+    melt.data.frame(int.data.important, id.vars=c("X20", "class"))
+  myData4 = 
+    melt.data.frame(int.data.important, id.vars=c("X25", "class"))
+  myData1$variableX = "X18"
+  myData2$variableX = "X19"
+  myData3$variableX = "X20"
+  myData4$variableX = "X25"
+  names(myData1)[1] = "x"
+  names(myData2)[1] = "x"
+  names(myData3)[1] = "x"
+  names(myData4)[1] = "x"
+  myData = rbind(myData4, myData1, myData2, myData3)
+  
+  ggplot(myData, aes(x, value)) +
+    geom_jitter(aes(colour = class), alpha = 0.1) +
+    facet_grid(variableX~variable) +
+    xlab("") + ylab("")
+  
+  
+  # Remove temporal variables
+  if (rm.variables) {
+    rm(
+      myData,
+      myData1,
+      myData2,
+      myData3,
+      myData4,
+      int.data.important,
+      int.data.discret,
+      int.data,
+      important.data.n,
+      most.important.4,
+      myCuts,
+      cuts.10,
+      my.selection,
+      my.dataset.10.discretized,
+      my.dataset.10.discretized.cl,
+      my.dataset.10.discretized.dt,
+      my.dataset.10,
+      my.dataset.10.cl,
+      my.dataset.10.dt,
+      weights.chi.squared
+    )
+  }
 }
 ## As it can be seen in the plots, the cuts are made where the 
 ## possitive/negative proportion changes the most
 
 
-# Give a proper name to output from this step
-dataset.tra.preprocessed.discretized = dataset.discretized
-
-
 # Remove temporal variables
-rm(
-  dataset.discretized
-)
+if (rm.variables) {
+  rm(
+    dataset.discretized
+  )
+}
