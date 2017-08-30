@@ -10,10 +10,17 @@
 library(outliers)
 library(FSelector)
 library(mvoutlier)
+library(reshape)
+library(ggplot2)
 
 # Visualization
 if (!exists("plot.enable")) {
   plot.enable = F
+}
+
+# Remove variables
+if (!exists("rm.variables")) {
+  rm.variables = F
 }
 
 # Set the random seed in order to be able to reproduce the results
@@ -127,19 +134,21 @@ print(sprintf(
 ## Around 18% of the registers have been removed
 
 # Remove temporal variables
-rm(
-  new.proportion,
-  old.proportion,
-  MCD.outliers,
-  UNI.outliers,
-  removed.rows,
-  the.outliers,
-  is.MCD.outlier,
-  alpha.value,
-  my.selection,
-  my.dataset.10,
-  my.dataset.10.cl,
-  my.dataset.10.dt,
-  mvoutlier.plot,
-  weights.chi.squared
-)
+if (rm.variables) {
+  rm(
+    new.proportion,
+    old.proportion,
+    MCD.outliers,
+    UNI.outliers,
+    removed.rows,
+    the.outliers,
+    is.MCD.outlier,
+    alpha.value,
+    my.selection,
+    my.dataset.10,
+    my.dataset.10.cl,
+    my.dataset.10.dt,
+    mvoutlier.plot,
+    weights.chi.squared
+  )
+}

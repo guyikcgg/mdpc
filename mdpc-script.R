@@ -15,6 +15,11 @@ if (!exists("plot.enable")) {
   plot.enable = F
 }
 
+# Remove variables
+if (!exists("rm.variables")) {
+  rm.variables = T
+}
+
 # Preprocessing
 source("load-data.R")
 if (plot.enable) {
