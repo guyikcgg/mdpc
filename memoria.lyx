@@ -4323,10 +4323,15 @@ reference "tab:feature-selection-chi.squared"
 \end_layout
 
 \begin_layout Standard
-La aportación de información puede entenderse como una diferencia en la
- distribución de probabilidades condicionales con respecto a la clase.
- Para verificar los resultados de este test, hemos aplicado un test de Kolmogoro
-v-Smirnov.
+La aportación de información sobre la clase que un atributo proporciona
+ puede entenderse como una diferencia en las distribuciones de probabilidades
+ condicionales con respecto a la clase.
+ Para verificar los resultados ofrecidos por la función 
+\family typewriter
+chi.squared
+\family default
+, hemos aplicado un test de Kolmogorov-Smirnov, comparando, para cada atributo,
+ las distribuciones asociadas a cada clase.
  Con este test hemos podido comprobar que no puede refutarse la hipótesis
  de que las variables señaladas presenten distribuciones significativamente
  diferentes con más de un 
@@ -5837,7 +5842,7 @@ X35
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X32
 \end_layout
 
@@ -5848,7 +5853,7 @@ X32
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5862,7 +5867,7 @@ X32
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X41
 \end_layout
 
@@ -5873,7 +5878,7 @@ X41
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5887,7 +5892,7 @@ X41
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X42
 \end_layout
 
@@ -5898,7 +5903,7 @@ X42
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5912,7 +5917,7 @@ X42
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X44
 \end_layout
 
@@ -5923,7 +5928,7 @@ X44
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5937,7 +5942,7 @@ X44
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X46
 \end_layout
 
@@ -5948,7 +5953,7 @@ X46
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5962,7 +5967,7 @@ X46
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X47
 \end_layout
 
@@ -5973,7 +5978,7 @@ X47
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -5987,7 +5992,7 @@ X47
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X48
 \end_layout
 
@@ -5998,7 +6003,7 @@ X48
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -6012,7 +6017,7 @@ X48
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X49
 \end_layout
 
@@ -6023,7 +6028,7 @@ X49
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
@@ -6037,7 +6042,7 @@ X49
 \begin_layout Plain Layout
 
 \family typewriter
-\color brown
+\color red
 X50
 \end_layout
 
@@ -6048,7 +6053,7 @@ X50
 
 \begin_layout Plain Layout
 
-\color brown
+\color red
 0.000
 \end_layout
 
