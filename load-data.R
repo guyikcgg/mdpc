@@ -52,13 +52,34 @@ dataset.tst.cl = dataset.tst$class   #  |-> Class
 dataset.tst.dt = dataset.tst[, -50]  #  \-> Data
 
 # Separate data into numeric and factor (useful for visualization)
-dataset.numeric.dt = dataset.tra[,sapply(dataset, class) != "factor"]
-dataset.numeric.cl = dataset.tra.cl
-dataset.numeric = cbind(
-  dataset.numeric.dt,
-  class = dataset.numeric.cl
-)
-dataset.factor  = dataset.tra[,sapply(dataset, class) == "factor"]
+subset.numeric.dt = function(df) {
+  return(
+    df[,sapply(df, class) != "factor", drop = F]
+  )
+}
+subset.numeric.cl = function(df) {
+  return(
+    df$class
+  )
+}
+subset.numeric    = function(df) {
+  return(cbind(
+    subset.numeric.dt(df),
+    class = df$class
+  ))
+}
+subset.factor.dt  = function(df) {
+  return(subset(
+    df[,sapply(df, class) == "factor", drop = F],
+    select = -class
+  ))
+}
+subset.factor.cl  = subset.numeric.cl
+subset.factor     = function(df) {
+  return(
+    df[,sapply(df, class) == "factor", drop = F]
+  )
+}
 
-# Remove dummy variables
+# Remove temporal variables
 rm(filename, x)
