@@ -76,6 +76,21 @@ if (plot.enable) {
       alpha = 0.5
     ) +
     facet_wrap(~variable, scales = "free", ncol = 2)
+  
+  # Remove temporal variables
+  rm(
+    myData,
+    myCuts,
+    cuts.10,
+    my.selection,
+    my.dataset.10.discretized,
+    my.dataset.10.discretized.cl,
+    my.dataset.10.discretized.dt,
+    my.dataset.10,
+    my.dataset.10.cl,
+    my.dataset.10.dt,
+    weights.chi.squared
+  )
 }
 ## As it can be seen in the plots, the cuts are made where the 
 ## possitive/negative proportion changes the most
@@ -87,15 +102,5 @@ dataset.tra.preprocessed.discretized = dataset.discretized
 
 # Remove temporal variables
 rm(
-  dataset.discretized, 
-  myData,
-  myCuts,
-  cuts.10,
-  my.selection,
-  my.dataset.10.discretized,
-  my.dataset.10.discretized.cl,
-  my.dataset.10.discretized.dt,
-  my.dataset.10,
-  my.dataset.10.cl,
-  my.dataset.10.dt
+  dataset.discretized
 )

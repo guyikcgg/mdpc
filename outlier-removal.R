@@ -136,9 +136,10 @@ rm(
   the.outliers,
   is.MCD.outlier,
   alpha.value,
-  myData,
   my.selection,
   my.dataset.10,
   my.dataset.10.cl,
-  my.dataset.10.dt
+  my.dataset.10.dt,
+  mvoutlier.plot,
+  weights.chi.squared
 )
