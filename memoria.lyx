@@ -6140,7 +6140,306 @@ Clasificación
 \end_layout
 
 \begin_layout Subsection
-Elección de los algoritmos
+Apuntes sobre clasificación no balanceada
+\end_layout
+
+\begin_layout Standard
+Puesto que el problema estudiado se trata de una clasificación no balanceada,
+ ha habido que usar métricas de bondad que se ajustaran a esta situación.
+ En concreto, se ha usado el AUC (
+\emph on
+area under the curve
+\emph default
+), que se refiere al área bajo la curva ROC (
+\emph on
+receiver operating charasteristic
+\emph default
+).
+ Esta curva se construye representando la sensibilidad (
+\emph on
+sensitivity
+\emph default
+, o 
+\emph on
+true positive rate
+\emph default
+) con respecto al opuesto de la especificidad (
+\emph on
+
+\begin_inset Formula $1-$
+\end_inset
+
+specificity
+\emph default
+, o 
+\emph on
+false positive rate
+\emph default
+).
+ El receptor, o, en nuestro caso, el clasificador, funcionará mejor cuanto
+ más pronunciada sea la curva, y, por tanto, cuanto mayor sea el área bajo
+ la misma (AUC).
+ La figura
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:results-comparison-ROC-explanation"
+
+\end_inset
+
+ muestra una representación gráfica de esta curva, en la que se señalan
+ también el mejor y el peor caso posible.
+\end_layout
+
+\begin_layout Standard
+El uso del AUC soluciona el gran problema de otras medidas de bondad como
+ el 
+\emph on
+accuracy
+\emph default
+.
+ Esta última, en concreto, es una medida muy poco deseable en clasificación
+ no balanceada.
+ Por ejemplo, en el caso estudiado, un modelo que siempre predijera la clase
+ mayoritaria tendría un 
+\begin_inset Formula $75\%$
+\end_inset
+
+ de acierto.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/ROC_space-2.png
+	lyxscale 17
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:results-comparison-ROC-explanation"
+
+\end_inset
+
+Curva ROC genérica.
+ En rojo se representa el peor caso posible, en que la incertidumbre en
+ la detección es total (clasificación aleatoria).
+ La línea que pasa por la esquina superior izquierda representa el mejor
+ caso, en que la sensibilidad y la especificidad son máximas.
+ 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "wiki:ROCexplanation"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Otra forma de solucionar este problema es tratar de equilibrar las clases,
+ convirtiendo el problema en una clasificación balanceada.
+ Para esto, existen varios métodos, que pueden clasificarse como se expone
+ a continuación.
+\end_layout
+
+\begin_layout Subsubsection
+Métodos basados en instancia (
+\emph on
+instance-based methods
+\emph default
+)
+\end_layout
+
+\begin_layout Standard
+Estos métodos transforman el set de datos de entrenamiento para luego aplicar
+ algoritmos de clasificación tradicionales.
+ De esta forma, pretenden transformar el dataset original, que presenta
+ muchas más observaciones de una clase que de la otra, en un dataset con
+ un número parecido de observaciones de ambas clases.
+ Existen dos formas principales de hacer esto.
+\end_layout
+
+\begin_layout Paragraph
+Submuestreo de las clases mayoritarias
+\end_layout
+
+\begin_layout Standard
+Se trata de eliminar observaciones de la clase mayoritaria, aumentando así
+ la proporción de observaciones de la clase minoritaria sobre el total.
+\end_layout
+
+\begin_layout Standard
+Para ello, puede eliminarse la observación más cercana a cada observación
+ de la clase minoritaria (Tomek-links).
+ De esta forma se crea una separación clara entre los items de cada clase.
+ También existen otros algoritmos más complejos, como 
+\emph on
+Condensed Nearest Neighbor (CNN)
+\emph default
+ o 
+\emph on
+Neighborhood Cleaning Rule (NCL)
+\emph default
+, que están igualmente enfocados a resaltar las diferencias entre las dos
+ clases.
+\end_layout
+
+\begin_layout Standard
+Estos algoritmos son ampliamente utilizados en detección de anomalías, donde
+ existe una gran diferencia en el número de instancias de las clases 
+\begin_inset Quotes fld
+\end_inset
+
+normales
+\begin_inset Quotes frd
+\end_inset
+
+ y 
+\begin_inset Quotes fld
+\end_inset
+
+anómalas
+\begin_inset Quotes frd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Paragraph
+Sobremuestreo de las clases minoritarias
+\end_layout
+
+\begin_layout Standard
+Se trata de introducir observaciones artificiales, con el objetivo de aumentar
+ la proporción de instancias de la clase minoritaria.
+\end_layout
+
+\begin_layout Standard
+La técnica más usada es probablemente SMOTE (
+\emph on
+Synthetic Minority Over-sampling Technique
+\emph default
+)
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset citation
+LatexCommand cite
+key "chawla2002smote"
+
+\end_inset
+
+.
+ Esta técnica selecciona al azar una observación de la clase minoriataria.
+ A continuación, selecciona los 
+\begin_inset Formula $k$
+\end_inset
+
+ elementos más cercanos de la misma clase.
+ Finalmente, genera items sintéticos en la línea que une la observación
+ inicial y sus vecinos.
+\end_layout
+
+\begin_layout Subsubsection
+Métodos basados en algoritmo (
+\emph on
+algorithm-based methods
+\emph default
+)
+\end_layout
+
+\begin_layout Standard
+Estos métodos modifican los algoritmos de clasificación para dar más peso
+ a las clases minoritarias, evitando así alterar el conjunto de datos.
+ Existen varias formas de conseguirlo:
+\end_layout
+
+\begin_layout Paragraph
+Métodos sensitivos al coste
+\end_layout
+
+\begin_layout Standard
+Consisten en asignar un coste elevado a los datos de las clases minoritarias,
+ haciéndolos más relevantes y consiguiendo una mejor clasificación.
+ Estos métodos sólo son aplicables a un grupo muy determinado de algoritmos
+ que admiten pesos en el aprendizaje del modelo.
+\end_layout
+
+\begin_layout Paragraph
+Bagging
+\end_layout
+
+\begin_layout Standard
+Consiste en aplicar el algoritmo de clasificación varias veces, cada vez
+ con una muestra del dataset diferente, que puede incluir elementos duplicados.
+ Estas clasificaciones deberán producir modelos con sobreajuste, que luego
+ serán promediados.
+ De este modo, en cada paso se conseguirá un modelo más efectivo, que habrá
+ contado con la presencia de más observaciones de la clase minoritaria durante
+ su construcción, mejorando así la calidad de la clasificación.
+\end_layout
+
+\begin_layout Paragraph
+Boosting
+\end_layout
+
+\begin_layout Standard
+Consiste en aplicar el algoritmo de clasificación varias veces, dando cada
+ vez más peso a los elementos que no fueron bien clasificados.
+ De este modo, en cada paso el algoritmo se conseguirá un modelo más efectivo,
+ que habrá sido entrenado dando más importancia a los elementos minoritarios.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Comment
+status open
+
+\begin_layout Paragraph
+Adaptaciones específicas
+\end_layout
+
+\begin_layout Plain Layout
+Además, existen algoritmos de clasificación específicos que están adaptados
+ al problema de clasificación no balanceada.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Elección del algoritmo de clasificación
 \end_layout
 
 \begin_layout Standard
