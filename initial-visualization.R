@@ -69,21 +69,17 @@ data.frame(missing.values = colSums(is.na(dataset)))
 ## There are no missing values
 
 
-
-
-
-
-
-
-
-
-
 # Plot numeric data
 ## Distributions
-dataset.numeric = dataset[,sapply(dataset, class) != "factor"]
-myData = melt.data.frame(
-  cbind(dataset.numeric, class = dataset$class)
+dataset.numeric.dt = dataset[,sapply(dataset, class) != "factor"]
+dataset.numeric.cl = dataset$class
+dataset.numeric = cbind(
+  dataset.numeric.dt,
+  class = dataset.numeric.cl
 )
+dataset.factor  = dataset[,sapply(dataset, class) == "factor"]
+myData = melt.data.frame(dataset.numeric)
+
 ## Density (relative to the class)
 ggplot(myData) +
   geom_density(aes(value)) +
