@@ -92,6 +92,23 @@ ggplot(myData) +
   facet_wrap(~variable, scales = "free")
 
 
+# Plots for the document
+myData1 = melt.data.frame(
+  cbind(dataset.numeric[,1:40], class = dataset.numeric.cl)
+)
+myData2 = melt.data.frame(
+  dataset.factor,
+  id.vars = "class"
+)
+ggplot(myData1) +
+  geom_freqpoly(aes(value)) +
+  geom_freqpoly(aes(value, color = class)) +
+  facet_wrap(~variable, scales = "free", ncol = 4)
+ggplot(myData2) +
+  geom_bar(aes(value, fill = class), position = "dodge") +
+  facet_wrap(~variable, scales = "free", ncol = 4)
+
+
 # ATTRIBUTE-SELECTION APPROACH
 
 # Can attributes with the same distribution be informative?
