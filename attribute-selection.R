@@ -128,6 +128,12 @@ if(plot.enable) {
     geom_col(aes(variable, value, fill = variable)) + 
     facet_wrap(~attribute, ncol = 5) + coord_flip() +
     xlab("") + ylab("")
+  
+  if(rm.variables) {
+    rm(
+      myData
+    )
+  }
 }
 
 # Check for redundancies
@@ -150,20 +156,45 @@ select.attributes = function(df, cor.cutoff = 0.8) {
   return(df[,my.new.selection])
 }
 
-
+# Get a dataframe with the selected attributes
 dataset.tra.preprocessed.selected.dt = select.attributes(dataset.tra.preprocessed)
+dataset.tra.preprocessed.selected.cl = dataset.tra.preprocessed.cl
+dataset.tra.preprocessed.selected = cbind(
+  dataset.tra.preprocessed.selected.dt,
+  class = dataset.tra.preprocessed.selected.cl
+)
+
 
 # Build a summary table for the document
-mt = matrix(nrow = 25, ncol = 4)
-mt[,1] = names(data.types)
-mt[,2] = data.types
-mt[,4] = paste("X", 1:50, sep ="")
-for (i in 1:50) {
-  if (data.types[i] == "factor") {
-    mt[i,3] = paste("{", paste(levels(dataset[,i]), collapse = ", "), "}", sep = "")
-  } else if (data.types[i] == "numeric") {
-    mt[i,3] = sprintf("[%.2f, %.2f]", min(dataset[,i]), max(dataset[,i]))
+mt = matrix(nrow = 25, ncol = 3)
+mt[,1] = names(dataset.tra.preprocessed.selected.dt)
+mt[,2] = sapply(dataset.tra.preprocessed.selected.dt, class)
+for (i in 1:25) {
+  if (mt[i,2] == "factor") {
+    mt[i,3] = paste("{", paste(levels(dataset.tra.preprocessed.selected.dt[,i]), collapse = ", "), "}", sep = "")
+  } else if (mt[i,2] == "numeric") {
+    mt[i,3] = sprintf("[%.2f, %.2f]", min(dataset.tra.preprocessed.selected.dt[,i]), max(dataset.tra.preprocessed.selected.dt[,i]))
   } else {
-    mt[i,3] = sprintf("[%d, %d]", min(dataset[,i]), max(dataset[,i]))
+    mt[i,3] = sprintf("[%d, %d]", min(dataset.tra.preprocessed.selected.dt[,i]), max(dataset.tra.preprocessed.selected.dt[,i]))
   }
+}
+
+# Remove temporal variables
+if(rm.variables) {
+  rm(
+    mt,
+    numeric.data,
+    numeric.data.dt,
+    numeric.data.simplified,
+    weights,
+    weights.num,
+    weights.scaled,
+    weights.oneR,
+    weights.gain.ratio,
+    weights.information.gain,
+    weights.chi.squared,
+    myData.n,
+    myData.p,
+    ks.test.results.pn
+  )
 }
