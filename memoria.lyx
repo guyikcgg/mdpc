@@ -9944,6 +9944,95 @@ status open
 Estructura y uso del código generado
 \end_layout
 
+\begin_layout Standard
+El código desarrollado para este trabajo se ha estructurado en los siguientes
+ ficheros:
+\end_layout
+
+\begin_layout Enumerate
+Particionado y visualización de los datos
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+dataset-partitioning.R se encarga del particionado del conjunto de datos
+ proporcionado en diez particiones o folds que serán usadas en el proceso
+ de validación cruzada.
+ Estas particiones son guardadas en disco con el fin de permitir la reproducibil
+idad.
+ Adicionalmente, proporciona funciones para acceder a los datos de entrenamiento
+ y test de una forma cómoda.
+\end_layout
+
+\begin_layout Description
+load-data.R se encarga de cargar los datos previamente guardados en la memoria
+ no volátil.
+ Además, proporciona algunas funciones útiles para acceder a partes de estos
+ datos de forma cómoda.
+\end_layout
+
+\begin_layout Description
+initial-visualization.R se encarga de la visualización inicial de los datos,
+ mostrando el tamaño del conjunto de datos, la clase de cada atributo y
+ la distribución en frecuencias de los mismos.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Preprocesamiento
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+outlier-removal.R se encarga de la eliminación de anomalías, tanto en en
+ una como en varias variables, del conjunto de datos.
+\end_layout
+
+\begin_layout Description
+discretization.R se encarga de la discretización de los datos.
+\end_layout
+
+\begin_layout Description
+attribute-selection.R se encarga de la selección de características, comenzando
+ por la importancia de cada atributo para terminar con las redundancias.
+\end_layout
+
+\begin_layout Description
+noise-filter.R se encarga del filtrado de los datos, eliminando instancias
+ cuya clase está probablemente equivocada.
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Clasificación
+\end_layout
+
+\begin_layout Enumerate
+Ejecución
+\end_layout
+
+\begin_deeper
+\begin_layout Description
+mdpc-script.R es un script que ejecuta de forma secuencial cada uno de los
+ pasos de las etapas de preprocesamiento y de clasificación.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+Cabe mencionar que cada uno de los scripts hace uso de variables globales
+ que han sido generadas por los scripts anteriores.
+ Por este motivo, los scripts deben ejectuarse de forma secuencial, en el
+ orden descrito anteriormente.
+ Los resultados obtenidos pueden verse afectados si estas variables globales
+ son modificadas manualmente antes de ejecutar cualquiera de los scripts.
+ Es por esto que se proporciona el fichero 
+\family typewriter
+mdpc-script.R
+\family default
+, con el que nos aseguramos de que los resultados son perfectamente reproducible
+s.
+\end_layout
+
 \begin_layout Section
 \begin_inset CommandInset label
 LatexCommand label
@@ -10122,7 +10211,7 @@ filename "noise-filter.R"
 
 \family typewriter
 \size footnotesize
-End Of File noise-filter.R'
+End Of File 'noise-filter.R'
 \end_layout
 
 \begin_layout LyX-Code
@@ -10140,6 +10229,29 @@ name "sec:appendix-classification"
 \end_inset
 
 Código fuente: Clasificación
+\end_layout
+
+\begin_layout Section
+\begin_inset CommandInset label
+LatexCommand label
+name "sec:appendix-execution"
+
+\end_inset
+
+Código fuente: Ejecución
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset include
+LatexCommand lstinputlisting
+filename "mdpc-script.R"
+
+\end_inset
+
+
+\family typewriter
+\size footnotesize
+End Of File 'mdpc-script.R'
 \end_layout
 
 \begin_layout LyX-Code
