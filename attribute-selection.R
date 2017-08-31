@@ -88,26 +88,11 @@ weights.num$gain.ratio = gain.ratio(class~., numeric.data, "log2")
 weights.gain.ratio = weights$gain.ratio[order(weights$gain.ratio, decreasing = T), , drop = F]
 ### Results differ greatly!!
 
-
-# Check for redundancies
-## Check correlation amongst variables
-correlations = cor(numeric.data.dt)
-findCorrelation(correlations, cutoff = 0.8)
-drop.attributes.n = c(
-  drop.attributes.n,
-  findCorrelation(correlations, cutoff = 0.8)
-)
-
-
-
-
-
-
+## OneR measure
 weights$oneR = 1-oneR(class~., dataset.tra.preprocessed)
 weights.oneR = weights$oneR[order(weights$oneR, decreasing = T), , drop = F]
-## Numerical variables have been discretized. 
 
-
+# Get a summary of the different measurements
 my.scale = function(x) { return ((x-min(x))/(max(x)-min(x))) }
 
 weights.scaled = weights
@@ -119,58 +104,66 @@ weights.scaled = weights.scaled[order(weights.scaled$sum, decreasing = T), , dro
 weights.scaled = weights.scaled[1:40, ]
 rownames(weights.scaled) = 1:40
 
+# Select attributes according to this summary
+my.selection = which(names(dataset.tra) %in% weights.scaled[1:30,1])
 
-myData = melt.data.frame(
-  weights.scaled,
-  measure.vars = c("sum.scaled", "chi.squared", "oneR", "gain.ratio", "information.gain")
-)
-myData$attribute = factor(myData$attribute, levels = weights.scaled$attribute)
 
-ggplot(myData) + 
-  geom_rect(
-    aes(color = type),
-    xmin = -Inf,
-    xmax = Inf, 
-    ymin = -Inf,
-    ymax = Inf, 
-    alpha = 0.02
-  ) +
-  geom_col(aes(variable, value, fill = variable)) + 
-  facet_wrap(~attribute, ncol = 5) + coord_flip() +
-  xlab("") + ylab("")
+# Plot results
+if(plot.enable) {
+  myData = melt.data.frame(
+    weights.scaled,
+    measure.vars = c("sum.scaled", "chi.squared", "oneR", "gain.ratio", "information.gain")
+  )
+  myData$attribute = factor(myData$attribute, levels = weights.scaled$attribute)
   
+  ggplot(myData) + 
+    geom_rect(
+      aes(color = type),
+      xmin = -Inf,
+      xmax = Inf, 
+      ymin = -Inf,
+      ymax = Inf, 
+      alpha = 0.02
+    ) +
+    geom_col(aes(variable, value, fill = variable)) + 
+    facet_wrap(~attribute, ncol = 5) + coord_flip() +
+    xlab("") + ylab("")
+}
+
+# Check for redundancies
+## Check correlation amongst variables
+correlations = cor(numeric.data.dt)
+drop.attributes.n = c(
+  findCorrelation(correlations, cutoff = 0.8)
+)
+
+## Remove redundant attributs from my.selection of attributes
+my.new.selection = setdiff(my.selection, drop.attributes.n)
+
+# Simplify the original datasets
+select.attributes = function(df, cor.cutoff = 0.8) {
+  drop.attributes.n = c(
+    findCorrelation(correlations, cutoff = cor.cutoff)
+  )
+  
+  my.new.selection = setdiff(my.selection, drop.attributes.n)
+  return(df[,my.new.selection])
+}
 
 
+dataset.tra.preprocessed.selected.dt = select.attributes(dataset.tra.preprocessed)
 
-
-
-
-
-
-
-
-# Drop completely irrelevant numeric attributes
-drop.attributes = 
-  rownames(weights.chi.squared)[weights.chi.squared == 0]
-drop.attributes.n = which(names(numeric.data) %in% drop.attributes)
-
-
-
-
-# Drop the attributes
-drop.attributes.n = unique(drop.attributes.n)
-print(paste("Dropping", length(drop.attributes.n), "attributes..."))
-numeric.data.simplified = 
-  numeric.data[, -drop.attributes.n]
-
-
-
-
-stop()
-
-
-
-
-
-
-
+# Build a summary table for the document
+mt = matrix(nrow = 25, ncol = 4)
+mt[,1] = names(data.types)
+mt[,2] = data.types
+mt[,4] = paste("X", 1:50, sep ="")
+for (i in 1:50) {
+  if (data.types[i] == "factor") {
+    mt[i,3] = paste("{", paste(levels(dataset[,i]), collapse = ", "), "}", sep = "")
+  } else if (data.types[i] == "numeric") {
+    mt[i,3] = sprintf("[%.2f, %.2f]", min(dataset[,i]), max(dataset[,i]))
+  } else {
+    mt[i,3] = sprintf("[%d, %d]", min(dataset[,i]), max(dataset[,i]))
+  }
+}

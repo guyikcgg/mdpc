@@ -30,7 +30,7 @@ table(data.types)
 
 
 # Build a summary table for the document
-mt = matrix(nrow =50, ncol = 4)
+mt = matrix(nrow = 50, ncol = 4)
 mt[,1] = names(data.types)
 mt[,2] = data.types
 mt[,4] = paste("X", 1:50, sep ="")
