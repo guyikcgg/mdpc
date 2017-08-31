@@ -28,6 +28,7 @@ if (plot.enable) {
 source("outlier-removal.R")
 source("discretization.R")
 source("attribute-selection.R")
+source("noise-filter.R")
 
 
 # Classification

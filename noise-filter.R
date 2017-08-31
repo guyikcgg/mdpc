@@ -75,30 +75,31 @@ print(
 ### The proportion has improved (as expected)
 
 
-
-# Create some variables to plot
-# dataset.tra.preprocessed.selected = my.data.10.clean
-# names(dataset.tra.preprocessed.selected) = c(paste("X", 1:ncol(dataset.tra.preprocessed.selected), sep = ""))
-# 
-my.class = factor(c(my.clean.data.cl), levels = c(1,2,3), labels = c("negative", "positive", "noise"))
-my.class[ENN.out$id.rm] = "noise"
- 
-
-
 # Some plots demonstrating that the removed points were indeed strange
 # (only points from the negative class have been removed)
-ggplot(dataset.tra.preprocessed.selected, aes(X2, X3, color = class)) + 
-  geom_point(alpha = 0.1) +
-  geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+if (plot.enable) {
+  ggplot(dataset.tra.preprocessed.selected, aes(X2, X3, color = class)) + 
+    geom_point(alpha = 0.1) +
+    geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+  
+  ggplot(dataset.tra.preprocessed.selected, aes(X1, X5, color = class)) + 
+    geom_jitter(alpha = 0.1) +
+    geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+  
+  ggplot(dataset.tra.preprocessed.selected, aes(X1, X2, color = class)) + 
+    geom_point(alpha = 0.1) +
+    geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+  
+  ggplot(dataset.tra.preprocessed.selected, aes(X2, X8, color = class)) + 
+    geom_jitter(alpha = 0.1) +
+    geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+}
 
-ggplot(dataset.tra.preprocessed.selected, aes(X1, X5, color = class)) + 
-  geom_jitter(alpha = 0.1) +
-  geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
 
-ggplot(dataset.tra.preprocessed.selected, aes(X1, X2, color = class)) + 
-  geom_point(alpha = 0.1) +
-  geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
-
-ggplot(dataset.tra.preprocessed.selected, aes(X2, X8, color = class)) + 
-  geom_jitter(alpha = 0.1) +
-  geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+if (rm.variables) {
+  rm(
+    ENN.out,
+    IPF.out,
+    removed.instances
+  )
+}
