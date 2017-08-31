@@ -1,66 +1,104 @@
+################################################################
+#      Mineria de Datos: Preprocesamiento y Clasificacion      #
+#                                                              #
+# FILE: noise-filter.R                                         #
+#                                                              #
+# (C) Cristian González Guerrero                               #
+################################################################
 
-
-
+# Load required libraries
 library(NoiseFiltersR)
+library(unbalanced)
+library(ggplot2)
+library(reshape)
 
+# Visualization
+if (!exists("plot.enable")) {
+  plot.enable = F
+}
+
+# Remove variables
+if (!exists("rm.variables")) {
+  rm.variables = F
+}
+
+# Set the random seed in order to be able to reproduce the results
 set.seed(1)
-out = IPF(
+
+# Remove noisy instances using IPF
+IPF.out = IPF(
   formula = class~., 
-  data = cbind(data.numeric.simplified, class = data$class),
+  data = dataset.tra.preprocessed.selected,
   nfolds = 10
 )
 
-summary(out, explicit = T)
-identical(out$cleanData, data.numeric.simplified[setdiff(1:nrow(data.numeric.simplified), out$remIdx), ])
+## Get a summary of the noise elimination
+summary(IPF.out, explicit = F)
 
-
-ggplot(out$cleanData) + geom_bar(aes(class, fill = class))
-prop.table(table(out$cleanData$class)) #BAD!
-
-
-
+prop.table(table(IPF.out$cleanData$class))
+### The noise elimination has affected the positive class, which is the minoritary class.
+### We need another approach...
 
 
 
-source("load-data.R")
-source("attribute-selection.R")
-source("outlier-removal.R")
+# Remove noise using ENN
 
-library(unbalanced)
+# Remove some points with ENN
+ENN.out = ubENN(
+  subset.numeric.dt(dataset.tra.preprocessed.selected),
+  ifelse(
+    dataset.tra.preprocessed.selected.cl == "negative",
+    0, 
+    1
+  ), 
+  verbose = T
+)
 
-# Remove some points with ENN (Wilson 1972) # Try Tomek?
-result = ubENN(my.data.10.clean, ifelse(my.data.10.clean.cl == "negative", 0, 1), verbose = T)
-prop.table(table(result$Y)) #OK!
+## Get a summary of the results
+print(sprintf(
+  "Removed %d noisy instances (%.2f %% of the total)",
+  nrow(dataset.tra.preprocessed.selected) - nrow(ENN.out$X),
+  100 * ( 1 - nrow(ENN.out$X) / nrow(dataset.tra.preprocessed.selected))
+))
 
-# Retrieve filtered data
-my.data.10.cleaner    = my.data.10.clean[-result$id.rm, ]
-my.data.10.cleaner.cl = my.data.10.clean.cl[-result$id.rm]
+## Retrieve filtered data
+removed.instances = ENN.out$id.rm
+my.clean.data    = dataset.tra.preprocessed.selected[-removed.instances, ]
+my.clean.data.dt = dataset.tra.preprocessed.selected.dt[-removed.instances, ]
+my.clean.data.cl = dataset.tra.preprocessed.selected.cl[-removed.instances]
+
+## Check the relative frequencies of each class
+print(
+  prop.table(table(my.clean.data.cl))
+)
+
+### The proportion has improved (as expected)
 
 
 
 # Create some variables to plot
-pqn = my.data.10.clean
-names(pqn) = c(paste("X", 1:ncol(pqn), sep = ""))
-
-my.class = factor(c(my.data.10.clean.cl), levels = c(1,2,3), labels = c("negative", "positive", "noise"))
-my.class[result$id.rm] = "noise"
-
+# dataset.tra.preprocessed.selected = my.data.10.clean
+# names(dataset.tra.preprocessed.selected) = c(paste("X", 1:ncol(dataset.tra.preprocessed.selected), sep = ""))
+# 
+my.class = factor(c(my.clean.data.cl), levels = c(1,2,3), labels = c("negative", "positive", "noise"))
+my.class[ENN.out$id.rm] = "noise"
+ 
 
 
 # Some plots demonstrating that the removed points were indeed strange
 # (only points from the negative class have been removed)
-ggplot(pqn, aes(X2, X3, color = my.data.10.clean.cl)) + 
+ggplot(dataset.tra.preprocessed.selected, aes(X2, X3, color = class)) + 
   geom_point(alpha = 0.1) +
-  geom_point(data = pqn[result$id.rm, ], alpha = 0.5, color = "#FFCC00")
+  geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
 
-ggplot(pqn, aes(X3, X7, color = my.data.10.clean.cl)) + 
-  geom_point(alpha = 0.1) +
-  geom_point(data = pqn[result$id.rm, ], alpha = 0.5, color = "#FFCC00")
-
-ggplot(pqn, aes(X2, X8, color = my.data.10.clean.cl)) + 
-  geom_point(alpha = 0.1) +
-  geom_point(data = pqn[result$id.rm, ], alpha = 0.5, color = "#FFCC00")
-
-ggplot(pqn, aes(X1, X5, color = my.data.10.clean.cl)) + 
+ggplot(dataset.tra.preprocessed.selected, aes(X1, X5, color = class)) + 
   geom_jitter(alpha = 0.1) +
-  geom_jitter(data = pqn[result$id.rm, ], alpha = 0.5, color = "#FFCC00")
+  geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+
+ggplot(dataset.tra.preprocessed.selected, aes(X1, X2, color = class)) + 
+  geom_point(alpha = 0.1) +
+  geom_point(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
+
+ggplot(dataset.tra.preprocessed.selected, aes(X2, X8, color = class)) + 
+  geom_jitter(alpha = 0.1) +
+  geom_jitter(data = dataset.tra.preprocessed.selected[removed.instances,], alpha = 0.5, color = "#FFCC00")
