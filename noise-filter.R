@@ -29,7 +29,8 @@ set.seed(1)
 IPF.out = IPF(
   formula = class~., 
   data = dataset.tra.preprocessed.selected,
-  nfolds = 10
+  nfolds = 10,
+  consensus = T
 )
 
 ## Get a summary of the noise elimination
