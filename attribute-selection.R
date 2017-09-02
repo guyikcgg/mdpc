@@ -166,7 +166,7 @@ dataset.tra.preprocessed.selected = cbind(
 
 
 # Build a summary table for the document
-mt = matrix(nrow = 25, ncol = 3)
+mt = matrix(nrow = ncol(dataset.tra.preprocessed.selected.dt), ncol = 3)
 mt[,1] = names(dataset.tra.preprocessed.selected.dt)
 mt[,2] = sapply(dataset.tra.preprocessed.selected.dt, class)
 for (i in 1:25) {
