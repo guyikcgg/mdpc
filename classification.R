@@ -1,178 +1,196 @@
-# CLASSIFICATION!!
-
+# Clear workspace
+closeAllConnections()
+rm(list=ls())
 
 library(dplyr) # for data manipulation
 library(caret) # for model-building
 library(DMwR) # for smote implementation
 library(purrr) # for functional programming (map)
-library(pROC) # for AUC calculations
+library(pROC) # for AUC calculation
+library(rattle)
+# library(doMC)
+# registerDoMC(cores = 2)
 
-
-source("load-data.R")
-source("attribute-selection.R")
-source("outlier-removal.R")
-
-set.seed(1)
-imbal_data = cbind(my.data.10.clean, Class = my.data.10.clean.cl)
-
-inTrain = createDataPartition(my.data.10.clean.cl, list = F)
-
-imbal_train <- imbal_data[inTrain, ]
-imbal_test  <- imbal_data[-inTrain, ]
-
-prop.table(table(imbal_train$Class))
-prop.table(table(my.data.10.clean.cl))
-
-# Set up control function for training
-
-ctrl <- trainControl(method = "repeatedcv",
-                     number = 10,
-                     repeats = 5,
-                     summaryFunction = twoClassSummary,
-                     verboseIter = TRUE,
-                     classProbs = TRUE)
-
-# Build a standard classifier using a gradient boosted machine
-
-set.seed(5627)
-
-orig_fit <- train(Class ~ .,
-                  data = imbal_train,
-                  method = "gbm",
-                  verbose = FALSE,
-                  metric = "ROC",
-                  trControl = ctrl)
 
 # Build custom AUC function to extract AUC
 # from the caret model object
-
-test_roc <- function(model, data) {
-  
-  roc(data$Class,
-      predict(model, data, type = "prob")[, "positive"])
-  
+test_roc = function(model, data) {
+  # Calculate the ROC for the minoritary class
+  roc(
+    data$class,
+    predict(model, data, type = "prob")[, "positive"]
+  )
 }
 
-orig_fit %>%
-  test_roc(data = imbal_test) %>%
-  auc()
+rm.variables = F
+plot.enable = F
+
+
+# Load data
+source("load-data.R")
+
+# Change the default training and test sets
+k = 2
+
+dataset.tra = dataset.train(k)
+dataset.tra.cl = dataset.tra$class
+dataset.tra.dt = subset(dataset.tra, select = -class)
+dataset.tst = dataset.test(k)
+dataset.tst.cl = dataset.tst$class
+dataset.tst.dt = subset(dataset.tst, select = -class)
+
+rm(dataset)
+
+# Preprocess the training dataset
+# source("outlier-removal.R")
+# source("discretization.R")
+if (!exists("dataset.tra.preprocessed")) {
+  dataset.tra.preprocessed = dataset.tra
+  dataset.tra.preprocessed.dt = dataset.tra.dt
+  dataset.tra.preprocessed.cl = dataset.tra.cl
+}
+# source("attribute-selection.R")
+# source("noise-filter.R")
 
 
 
 
 
-# Create model weights (they sum to one)
+# Set the input to tree-based classification
+training.set = dataset.tra #IPF.out$cleanData
+test.set  = dataset.tst
 
-model_weights <- ifelse(imbal_train$Class == "Class1",
-                        (1/table(imbal_train$Class)[1]) * 0.5,
-                        (1/table(imbal_train$Class)[2]) * 0.5)
+# Print some statistics about the training set and test set
+print(prop.table(table(training.set$class)))
+print(prop.table(table(test.set$class)))
+
+
+# Setup control function for training
+ctrl = trainControl(
+  method = "repeatedcv",
+  number = 10,
+  repeats = 3,
+  summaryFunction = twoClassSummary,
+  verboseIter = TRUE,
+  classProbs = TRUE
+)
+
+
+# Build a standard classifier using a gradient boosted machine (or not!)
+
+set.seed(1234)
+
+fit = list()
+
+
+fit$original = caret::train(
+  class ~ .,
+  data = training.set,
+  method = "rpart",
+  metric = "ROC",
+  trControl = ctrl
+)
+
+print(
+  fit$original %>%
+    test_roc(data = test.set) %>%
+    auc()
+)
+
 
 # Use the same seed to ensure same cross-validation splits
+ctrl$seeds = fit$original$control$seeds
 
-ctrl$seeds <- orig_fit$control$seeds
-
-# Build weighted model
-
-weighted_fit <- train(Class ~ .,
-                      data = imbal_train,
-                      method = "gbm",
-                      verbose = FALSE,
-                      weights = model_weights,
-                      metric = "ROC",
-                      trControl = ctrl)
 
 # Build down-sampled model
+ctrl$sampling = "down"
 
-ctrl$sampling <- "down"
+fit$down = caret::train(
+  class ~ .,
+  data = training.set,
+  method = "rpart",
+  # verbose = FALSE,
+  metric = "ROC",
+  trControl = ctrl
+)
 
-down_fit <- train(Class ~ .,
-                  data = imbal_train,
-                  method = "gbm",
-                  verbose = FALSE,
-                  metric = "ROC",
-                  trControl = ctrl)
+print(
+  fit$down %>%
+    test_roc(data = test.set) %>%
+    auc()
+)
+
 
 # Build up-sampled model
+ctrl$sampling = "up"
 
-ctrl$sampling <- "up"
+fit$up = caret::train(
+  class ~ .,
+  data = training.set,
+  method = "rpart",
+  # verbose = FALSE,
+  metric = "ROC",
+  trControl = ctrl
+)
 
-up_fit <- train(Class ~ .,
-                data = imbal_train,
-                method = "gbm",
-                verbose = FALSE,
-                metric = "ROC",
-                trControl = ctrl)
-
-# Build smote model
-
-ctrl$sampling <- "smote"
-
-smote_fit <- train(Class ~ .,
-                   data = imbal_train,
-                   method = "gbm",
-                   verbose = FALSE,
-                   metric = "ROC",
-                   trControl = ctrl)
+print(
+  fit$up %>%
+    test_roc(data = test.set) %>%
+    auc()
+)
 
 
+# # Build smote model
+# ctrl$sampling = "smote"
+# 
+# fit$SMOTE = caret::train(
+#   class ~ .,
+#   data = training.set,
+#   method = "rpart",
+#   # verbose = FALSE,
+#   metric = "ROC",
+#   trControl = ctrl
+# )
+# 
+# print(
+#   fit$SMOTE %>%
+#     test_roc(data = test.set) %>%
+#     auc()
+# )
 
-# Examine results for test set
 
-model_list <- list(original = orig_fit,
-                   weighted = weighted_fit,
-                   down = down_fit,
-                   up = up_fit,
-                   SMOTE = smote_fit)
+# Examine the results
+## Calculate ROC for every element in the `fit` list
+model_list_roc = fit %>%
+  map(test_roc, data = test.set)
 
-model_list_roc <- model_list %>%
-  map(test_roc, data = imbal_test)
+## Calculate the AUC
+print(
+  model_list_roc %>%
+    map(function(x) return(auc(x)))
+)
 
-model_list_roc %>%
-  map(auc)
-
-
-
-
-
-
-results_list_roc <- list(NA)
-num_mod <- 1
+# PLOT
+# Build a dataframe to plot
+results_list_roc = list()
+i = 1
 
 for(the_roc in model_list_roc){
+  results_list_roc[[i]] = 
+    data_frame(
+      tpr = the_roc$sensitivities,
+      fpr = 1 - the_roc$specificities,
+      model = names(fit)[i]
+    )
   
-  results_list_roc[[num_mod]] <- 
-    data_frame(tpr = the_roc$sensitivities,
-               fpr = 1 - the_roc$specificities,
-               model = names(model_list)[num_mod])
-  
-  num_mod <- num_mod + 1
-  
+  i = i + 1
 }
 
-results_df_roc <- bind_rows(results_list_roc)
+results_df_roc = bind_rows(results_list_roc)
 
-# Plot ROC curve for all 5 models
-
-custom_col <- c("#000000", "#009E73", "#0072B2", "#D55E00", "#CC79A7")
-
+# Plot ROC curve for all tested models
 ggplot(aes(x = fpr,  y = tpr, group = model), data = results_df_roc) +
-  geom_line(aes(color = model), size = 1) +
-  scale_color_manual(values = custom_col) +
   geom_abline(intercept = 0, slope = 1, color = "gray", size = 1) +
-  theme_bw(base_size = 18)
+  geom_line(aes(color = model), size = 1)
 
-# 
-# $original
-# Area under the curve: 0.7381
-# 
-# $weighted
-# Area under the curve: 0.7381
-# 
-# $down
-# Area under the curve: 0.7383
-# 
-# $up
-# Area under the curve: 0.7399
-# 
-# $SMOTE
-# Area under the curve: 0.7383
+# fancyRpartPlot(fit$up$finalModel, sub="")
