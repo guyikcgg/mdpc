@@ -1,3 +1,5 @@
+start.time = Sys.time()
+
 # Clear workspace
 closeAllConnections()
 rm(list=ls())
@@ -9,7 +11,7 @@ library(purrr)  # for functional programming (map)
 library(pROC)   # for AUC calculation
 library(rattle)
 library(doMC)
-registerDoMC(cores = 2)
+registerDoMC(cores = 3)
 
 
 # Build custom AUC function to extract AUC
@@ -79,7 +81,7 @@ source("noise-filter.R")
 ##################
 
 # Set the input to tree-based classification
-training.set = dataset.tra.preprocessed.selected
+training.set = IPF.out$cleanData
 test.set     = dataset.tst
 
 # Print some statistics about the training set and test set
@@ -162,12 +164,6 @@ print(
     auc()
 )
 
-# Get a table to put in the document
-test_measures = data.frame(AUC = as.numeric(lapply(model_list_roc, function(x) return(auc(x)))))
-test_measures$Accuracy = as.numeric(lapply(fit, test_accuracy, data = test.set))
-test_measures$Kappa = as.numeric(lapply(fit, test_kappa, data = test.set))
-rownames(test_measures) = names(fit)
-
 
 # # Build smote model
 # ctrl$sampling = "smote"
@@ -199,6 +195,12 @@ print(
     map(function(x) return(auc(x)))
 )
 
+# Get a table to put in the document
+test_measures = data.frame(AUC = as.numeric(lapply(model_list_roc, function(x) return(auc(x)))))
+test_measures$Accuracy = as.numeric(lapply(fit, test_accuracy, data = test.set))
+test_measures$Kappa = as.numeric(lapply(fit, test_kappa, data = test.set))
+rownames(test_measures) = names(fit)
+
 # PLOT
 # Build a dataframe to plot
 results_list_roc = list()
@@ -221,3 +223,6 @@ results_df_roc = bind_rows(results_list_roc)
 ggplot(aes(x = fpr,  y = tpr, group = model), data = results_df_roc) +
   geom_abline(intercept = 0, slope = 1, color = "gray", size = 1) +
   geom_line(aes(color = model), size = 1)
+
+end.time = Sys.time()
+save.image(".RData_RandomForest")
