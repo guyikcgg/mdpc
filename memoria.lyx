@@ -331,7 +331,15 @@ area under the curve
 \emph default
 ).
  Otra solución será usar un muestreo sobre la distribución para generar
- los modelos, o bien usar técnicas como bagging o boosting.
+ los modelos, o bien usar técnicas como 
+\emph on
+bagging
+\emph default
+ o 
+\emph on
+boosting
+\emph default
+.
 \end_layout
 
 \begin_layout Standard
@@ -3075,7 +3083,8 @@ reference "fig:visualization-factor-distributions"
 
 .
  Como puede observarse, hay variables cuya distribución depende fuertemente
- de la clase, mientras que en otras, las distribuciones son muy parecidas.
+ de la clase, mientras que en otras, las distribuciones de ambas clases
+ son muy parecidas.
  Esta dependencia de la clase hace que algunas variables sean muy interesantes,
  puesto que algunos de sus valores determinan en gran medida la clase de
  pertenencia.
@@ -3197,7 +3206,7 @@ Preprocesamiento
 En esta sección se trata el preprocesamiento de los datos, con el objetivo
  de conseguir unos datos de calidad que puedan servir de entrada a los algoritmo
 s de entrenamiento en la etapa de clasificación.
- Los principales objetivos del preprocesamiento:
+ Los principales objetivos del preprocesamiento son:
 \end_layout
 
 \begin_layout Enumerate
@@ -3628,8 +3637,8 @@ reference "fig:outliers-multivariate"
 
 \end_inset
 
-, la mayoría de las anomalías detectadas se encuentran mayormente en los
- bordes de las distribuciones.
+, la mayoría de las anomalías detectadas se encuentran cerca de los bordes
+ de las distribuciones.
 \end_layout
 
 \begin_layout Standard
@@ -3701,8 +3710,7 @@ Análisis de la eliminación de anomalías
 
 \begin_layout Standard
 Una vez realizado el proceso de eliminación de registros anómalos es necesario
- comprobar que la proporción de en la clase de salida no se haya visto modificad
-a.
+ comprobar que la proporción de la clase de salida no se haya visto modificada.
  Esto es crucial en clasificación no balanceada, puesto que los datos asociados
  a la clase minoritaria podrían ser detectados como anómalos.
  En particular, es muy interesante que los atributos asociados a la clase
@@ -4027,7 +4035,7 @@ as.
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -4073,7 +4081,7 @@ Distribución de frecuencias de las 10 variables más determinantes junto
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Graphics
@@ -4157,7 +4165,7 @@ reference "fig:discretization-scatterplot"
 \begin_inset Float figure
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset Float figure
@@ -4166,10 +4174,11 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename img/Rplot24.png
 	lyxscale 15
-	width 100text%
+	width 90text%
 
 \end_inset
 
@@ -4200,10 +4209,11 @@ sideways false
 status open
 
 \begin_layout Plain Layout
+\align center
 \begin_inset Graphics
 	filename img/Rplot25.png
 	lyxscale 15
-	width 100text%
+	width 90text%
 
 \end_inset
 
@@ -4273,14 +4283,13 @@ La selección de características es una etapa fundamental en la reducción
  De este modo, se eliminan atributos que no tienen peso en la decisión de
  la clase, así como atributos redundantes, cuya información puede ser extraída
  de un atributo similar.
-\end_layout
-
-\begin_layout Standard
-Existen varias aproximaciones para abordar la selección de características.
+ Existen varias aproximaciones para abordar la selección de características.
 \end_layout
 
 \begin_layout Subsubsection
-Aproximación filter
+Aproximación 
+\emph on
+filter
 \end_layout
 
 \begin_layout Standard
@@ -9177,16 +9186,23 @@ Variables más relevantes para esta tarea de clasificación, después de la
 \end_inset
 
 
-\begin_inset Note Note
-status open
+\end_layout
 
-\begin_layout Plain Layout
+\begin_layout Subsubsection
 Aproximación wrapper
 \end_layout
 
-\end_inset
-
-
+\begin_layout Standard
+Otra aproximación a la selección de características es la aproximación 
+\emph on
+wrapper
+\emph default
+.
+ En este tipo de aproximación, se prueban modelos diferentes con distintos
+ subconjuntos de atributos, comprobando qué atributos producen un mejor
+ modelo en función de alguna métrica.
+ No se han llevado a cabo pruebas con este tipo de aproximación en este
+ trabajo.
 \end_layout
 
 \begin_layout Subsection
@@ -9195,7 +9211,7 @@ Detección de ruido
 
 \begin_layout Standard
 La etapa de detección de ruido pretende detectar y, en su caso eliminar,
- los registros que presentan una clase que no se corresponda con la clase
+ los registros que presentan una clase que no se corresponde con la clase
  esperada, atendiendo a los atributos que dicho registro presenta.
  Existen varias formas de realizar este proceso.
  Uno de los más usados es el denominado 
@@ -9987,9 +10003,13 @@ caret
 caret
 \family default
  una interfaz común para todos ellos.
- Además, con caret se automatiza el proceso de validación cruzada, gracias
- a la parametrización del entrenamiento que nos ofrece este paquete a través
- de la función 
+ Además, con caret se automatiza el proceso de validación cruzada y de poda
+ (
+\emph on
+prune
+\emph default
+), gracias a la parametrización del entrenamiento que nos ofrece este paquete
+ a través de la función 
 \family typewriter
 trainControl
 \family default
@@ -10060,8 +10080,8 @@ accuracy
 \emph on
 accuracy
 \emph default
- mide el número de aciertos de forma muy tosca, sin tener en cuenta la descompen
-sación entre las clases mayoritaria y minoritaria.
+ no tiene en cuenta la descompensación entre las clases mayoritaria y minoritari
+a al medir el número de aciertos.
  El AUC, en cambio, tiene en cuenta estas diferencias.
  Las curvas ROC obtenidas pueden observarse en la figura
 \begin_inset space ~
@@ -11518,8 +11538,11 @@ Random forest
 \begin_layout Standard
 En la tarea de clasificación, hay métodos más efectivos que combinan distintos
  modelos simples con el objetivo de conseguir una mejor aproximación.
- Estos métodos, llamados en conjunto métodos de ensamble (ensamble methods),
- son muy eficaces, aunque su entrenamiento tiene un gran coste computacional.
+ Estos métodos, llamados en conjunto métodos de ensamble (
+\emph on
+ensamble methods
+\emph default
+), son muy eficaces, aunque su entrenamiento tiene un gran coste computacional.
  De entre estas técnicas, una de las más populares y que mejores resultados
  obtiene es Random Forest.
 \end_layout
@@ -11530,8 +11553,8 @@ Mejora sobre los árboles de decisión
 
 \begin_layout Standard
 Para comprobar que random forest supone una mejora sobre los árboles de
- decisión, se ha llevado el entrenamiento con los mismos parámetros mostrados
- en la tabla
+ decisión, se ha llevado a cabo el entrenamiento con los mismos parámetros,
+ mostrados en la tabla
 \begin_inset space ~
 \end_inset
 
@@ -11543,8 +11566,8 @@ reference "tab:classification-trees-parameters"
 \end_inset
 
 .
- Los resultados producidos por este modelo bajo estas mismas condiciones
- pueden verse en la tabla
+ Los resultados producidos por este modelo, bajo estas mismas condiciones,
+ se muestran en la tabla
 \begin_inset space ~
 \end_inset
 
@@ -11613,7 +11636,7 @@ name "fig:classification-randomforest-ROC"
 
 \end_inset
 
-Curvas ROC para los modelos basados en árboles de decisión con los parámetros
+Curvas ROC para los modelos basados en random forest con los parámetros
  de la tabla
 \begin_inset space ~
 \end_inset
@@ -11626,7 +11649,6 @@ reference "tab:classification-trees-parameters"
 \end_inset
 
 .
- Random forest ajusta bien aunque el conjunto de datos no sea balanceado.
 \end_layout
 
 \end_inset
@@ -11976,6 +11998,13 @@ Resultados obtenidos con los modelos basados en random forest con los parámetro
 \begin_inset space ~
 \end_inset
 
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:classification-trees-parameters"
+
+\end_inset
+
 .
 \end_layout
 
@@ -12037,10 +12066,17 @@ reference "tab:classification-randomforest-results-2"
 \end_layout
 
 \begin_layout Standard
+Al contrario de lo esperado, la eliminación de ruido no mejora el ajuste
+ de este modelo a los datos de test.
+ Sería necesario revisar los ajustes de esta etapa para tratar de conseguir
+ mejores resultados.
+\end_layout
+
+\begin_layout Standard
 \begin_inset Float table
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \align left
@@ -12305,7 +12341,7 @@ name "tab:classification-randomforest-parameters-2"
 \end_inset
 
 Parámetros de selección de datos y preprocesamiento usados para entrenar
- los árboles de decisión.
+ el modelo basado en random forest con eliminación de ruido.
 \end_layout
 
 \end_inset
@@ -12345,7 +12381,7 @@ name "fig:classification-randomforest-ROC-2"
 
 \end_inset
 
-Curvas ROC para los modelos basados en árboles de decisión con los parámetros
+Curvas ROC para los modelos basados en random forest con los parámetros
  de la tabla
 \begin_inset space ~
 \end_inset
@@ -12358,7 +12394,6 @@ reference "tab:classification-randomforest-parameters-2"
 \end_inset
 
 .
- Random forest ajusta bien aunque el conjunto de datos no sea balanceado.
 \end_layout
 
 \end_inset
@@ -12730,9 +12765,18 @@ Comparación de resultados
 
 \begin_layout Standard
 Atendiendo a los resultados obtenidos con los métodos estudiados, debemos
- considerar que Random Forest produce los mejores resultados.
- También cabe mencionar que no todas las etapas de preprocesamiento han
- sido útiles, ya que algunas hacían que los resultados empeorasen con respecto
+ considerar que random forest supera tanto a las máquinas de soporte vectorial
+ con kernel lineal como a los árboles de decisión sencillos.
+ Sin embargo, las SVM son muy superiores a los árboles de decisión sencillos,
+ y su rendimiento se acerca al de random forest.
+ Hay que decir que tanto el entrenamiento de random forest como el de SVM
+ son computacionalmente muy costosos, mientras que los árboles de decisión
+ no requieren tanto poder computacional.
+\end_layout
+
+\begin_layout Standard
+También cabe mencionar que no todas las etapas de preprocesamiento han sido
+ útiles, ya que algunas hacían que los resultados empeorasen con respecto
  a los producidos con los datos sin preprocesar.
  Como se ha mencionado anteriormente, es probable que estas etapas sean
  útiles y ayuden a mejorar los datos de entrenamiento si se ajustan correctament
@@ -12742,22 +12786,6 @@ e sus parámetros.
  cuenta otras características del conjunto de datos.
  Es posible que tener un conocimiento experto en la materia ayudara en esta
  tarea.
-\end_layout
-
-\begin_layout Section
-Conclusión
-\end_layout
-
-\begin_layout Standard
-En este trabajo hemos realizado la tarea de preprocesamiento de un conjunto
- de datos relativamente grande.
- Después, se ha llevado a cabo una clasificación binaria con clases no balancead
-as.
- Se ha puesto de manifiesto que existen múltiples posibilidades en cada
- una de las etapas de preprocesamiento, así como múltiples métodos de clasificac
-ión y de tratamiento de los datos no balanceados.
- De esta forma, se pone de manifiesto también la complejidad de la tarea
- del científico de datos.
 \end_layout
 
 \begin_layout LyX-Code
