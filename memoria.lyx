@@ -9715,7 +9715,11 @@ Estos métodos transforman el set de datos de entrenamiento para luego aplicar
 \end_layout
 
 \begin_layout Paragraph
-Submuestreo de las clases mayoritarias
+Submuestreo de las clases mayoritarias (
+\emph on
+downsampling
+\emph default
+)
 \end_layout
 
 \begin_layout Standard
@@ -9761,7 +9765,11 @@ anómalas
 \end_layout
 
 \begin_layout Paragraph
-Sobremuestreo de las clases minoritarias
+Sobremuestreo de las clases minoritarias (
+\emph on
+upsampling
+\emph default
+)
 \end_layout
 
 \begin_layout Standard
@@ -9958,100 +9966,25 @@ rpart
 caret
 \family default
 .
-\begin_inset Note Note
-status open
-
-\begin_layout Plain Layout
-Árboles podados??
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename img/Rplot39.eps
-	width 100text%
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Árbol de decisión generado a partir de los datos sin modificar.
- 
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\begin_inset Graphics
-	filename img/Rplot38.eps
-	width 100text%
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Árbol de decisión generado a partir de los dos datos con 
-\emph on
-upsampling
-\emph default
+ De este modo, la mayor parte del código que desarrollemos para el entrenamiento
+ de los árboles de decisión, también podrá ser usado en el entrenamiento
+ de otros modelos, al ofrecer 
+\family typewriter
+caret
+\family default
+ una interfaz común para todos ellos.
+ Además, con caret se automatiza el proceso de validación cruzada, gracias
+ a la parametrización del entrenamiento que nos ofrece este paquete a través
+ de la función 
+\family typewriter
+trainControl
+\family default
 .
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-
-
-\begin_inset Caption Standard
-
-\begin_layout Plain Layout
-Árboles de decisión que producen la mejor clasificación posible, generados
- a partir de los datos preprocesados.
- Los parámetros usados en el preprocesamiento pueden verse en la tabla
+\begin_layout Standard
+Después del entrenamiento de los árboles de decisión siguiendo los parámetros
+ indicados en la tabla
 \begin_inset space ~
 \end_inset
 
@@ -10062,57 +9995,122 @@ reference "tab:classification-trees-parameters"
 
 \end_inset
 
+, se ha procedido a analizar y representar los resultados.
+ La figura
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:classification-trees-treeplot"
+
+\end_inset
+
+ muestra una representación gráfica de los árboles generados a partir de
+ los datos originales y de los datos después de haber realizado un sobremuestreo
+ de la clase minoritaria.
+ Como puede comprobarse, estos árboles son muy distintos.
+ De entre estos dos árboles, solo el que ha sido obtenido a partir de los
+ datos con sobremuestreo es capaz de detectar positivos en varias regiones
+ del espacio.
+ Esto tiene una gran relación con los resultados expresados en la tabla
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:classification-trees-results"
+
+\end_inset
+
 .
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+ 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Float figure
-wide false
-sideways false
-status open
-
-\begin_layout Plain Layout
-\align center
-\begin_inset Graphics
-	filename img/Rplot37.eps
-	width 80text%
-
+Esta muestra los resultados obtenidos con diversas medidas de bondad de
+ la clasificación para los distintos datos de entrada ensayados.
+ Como puede comprobarse, existen contradicciones entre las métricas AUC
+ y 
+\emph on
+accuracy
+\emph default
+: en el caso de los datos originales, el 
+\emph on
+accuracy
+\emph default
+ es máximo y el AUC es mínimo, justo al contrario que en el caso de submuestreo.
+ Esto se debe a que el 
+\emph on
+accuracy
+\emph default
+ mide el número de aciertos de forma muy tosca, sin tener en cuenta la descompen
+sación entre las clases mayoritaria y minoritaria.
+ El AUC, en cambio, tiene en cuenta estas diferencias.
+ Las curvas ROC obtenidas pueden observarse en la figura
+\begin_inset space ~
 \end_inset
 
 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:classification-trees-ROC"
+
+\end_inset
+
+.
 \end_layout
 
-\begin_layout Plain Layout
-\begin_inset Caption Standard
+\begin_layout Standard
+Los parámetros de la etapa de preprocesamiento mostrados en la tabla
+\begin_inset space ~
+\end_inset
 
-\begin_layout Plain Layout
-\begin_inset CommandInset label
-LatexCommand label
-name "fig:classification-trees-ROC"
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:classification-trees-parameters"
 
 \end_inset
 
-Curvas ROC para el mejor modelo encontrado usando árboles de decisión.
+ han sido seleccionados para maximizar el AUC.
+ Esta selección se ha llevado a cabo de forma manual, modificando los distintos
+ parámetros y comprobando su efecto sobre cada uno de los modelos aprendidos.
+ Los parámetros de la selección de datos, en cambio, han sido elegidos de
+ forma arbitraria, ya que la partición elegida no debería afectar significativam
+ente a la selección de parámetros.
+ Una mejor aproximación habría sido iterar sobre las distintas particiones
+ en el proceso de selección, tomando una tabla final de resultados para
+ cada etapa de preprocesamiento.
+ De esta forma, se podría validar, a través de un test de los rangos con
+ signo de Wilcoxon, si existe una mejora significativa al aplicar cada etapa.
+ Sin embargo, esta aproximación es computacionalmente muy costosa, y habría
+ que repetirla para cada parámetro ensayado.
 \end_layout
 
-\end_inset
-
-
-\end_layout
-
-\end_inset
-
-
+\begin_layout Standard
+De entre las pruebas realizadas, ha llamado la atención que la eliminación
+ de ruido proporcionada por IPF y por ENN lleva a resultados muy parecidos,
+ que son, a su vez, muy parecidos a los resultados obtenidos sin la eliminación
+ de ruido.
+ Este es un hecho curioso, dado que las salidas que arrojan ambos métodos
+ son muy diferentes entre sí.
+ Sospechamos que esto puede estar sucediendo en el caso particular de los
+ árboles de decisión, por lo que se ensayará la eliminación de ruido en
+ otros modelos.
+ Por otro lado, la eliminación de anomalías en múltiples variables ha llevado
+ en todos los casos a modelos con menos capacidad predictiva.
+ Sospechamos que esto se debe a un error en la parametrización de esta etapa.
+ Tal vez las distribuciones de los datos no son las esperadas por la función
+ encargada de detectar las anomalías; no se están seleccionando correctamente
+ las variables de entrada; la métrica usada no sea la correcta; o se están
+ detectando como anómalos datos que están relativamente cerca al centro
+ de su distribución.
+ En último lugar, la selección de atributos parece estar funcionando correctamen
+te, aunque los atributos redundantes parecen ofrecer algo de información
+ en la etapa de clasificación, por lo que se ha optado por no eliminarlos.
 \end_layout
 
 \begin_layout Standard
@@ -10124,26 +10122,117 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="1">
+<lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="5cm">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-k-fold
+Selección de datos
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parámetros
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Número de particiones
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Método de generación
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cargadas del disco
+\begin_inset Newline newline
+\end_inset
+
+(particiones previamente generadas en 
+\family typewriter
+dataset-partitioning.R
+\family default
+)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partición para training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[1, 10] - {5}
+\begin_inset Newline newline
+\end_inset
+
+(todas menos la 5)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partición para test
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-5
+{5}
 \end_layout
 
 \end_inset
@@ -10197,7 +10286,11 @@ Eliminación de anomalías
 \begin_inset Text
 
 \begin_layout Plain Layout
-Sólo en una variable
+En una variable: Sí
+\begin_inset Newline newline
+\end_inset
+
+En múltiples variables: No
 \end_layout
 
 \end_inset
@@ -10297,7 +10390,167 @@ Parámetros de selección de datos y preprocesamiento usados para entrenar
 
 \end_layout
 
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
 \begin_layout Plain Layout
+Árboles podados??
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/Rplot39.eps
+	width 100text%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Árbol de decisión generado a partir de los datos sin modificar.
+ 
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename img/Rplot38.eps
+	width 100text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Árbol de decisión generado a partir de los dos datos con 
+\emph on
+upsampling
+\emph default
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:classification-trees-treeplot"
+
+\end_inset
+
+Árboles de decisión que producen la mejor clasificación posible, generados
+ a partir de los datos preprocesados.
+ Los parámetros usados en el preprocesamiento pueden verse en la tabla
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "tab:classification-trees-parameters"
+
+\end_inset
+
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename img/Rplot37.eps
+	width 80text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:classification-trees-ROC"
+
+\end_inset
+
+Curvas ROC para el mejor modelo encontrado usando árboles de decisión.
+\end_layout
+
+\end_inset
+
 
 \end_layout
 
@@ -10721,6 +10974,8 @@ name "tab:classification-trees-results"
 \end_inset
 
 Resultados obtenidos con los árboles de decisión.
+ Se presentan los distintos procesamientos llevados a cabo sobre los datos
+ de entrada y las distintas medidas realizadas.
 \end_layout
 
 \end_inset
@@ -10819,26 +11074,117 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="2" columns="1">
+<lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
+<column alignment="left" valignment="top" width="5cm">
 <row>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-k-fold
+Selección de datos
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parámetros
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Número de particiones
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Método de generación
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cargadas del disco
+\begin_inset Newline newline
+\end_inset
+
+(particiones previamente generadas en 
+\family typewriter
+dataset-partitioning.R
+\family default
+)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partición para training
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+[1, 10] - {5}
+\begin_inset Newline newline
+\end_inset
+
+(todas menos la 5)
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Partición para test
+\end_layout
+
+\end_inset
+</cell>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
-5
+{5}
 \end_layout
 
 \end_inset
@@ -10857,7 +11203,7 @@ k-fold
 <lyxtabular version="3" rows="5" columns="2">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
-<column alignment="left" valignment="top" width="8cm">
+<column alignment="left" valignment="top" width="6cm">
 <row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
@@ -10892,7 +11238,11 @@ Eliminación de anomalías
 \begin_inset Text
 
 \begin_layout Plain Layout
-Sólo en una variable
+En una variable: Sí
+\begin_inset Newline newline
+\end_inset
+
+En múltiples variables: No
 \end_layout
 
 \end_inset
@@ -11006,7 +11356,7 @@ status open
 \begin_layout Plain Layout
 \align center
 \begin_inset Tabular
-<lyxtabular version="3" rows="5" columns="4">
+<lyxtabular version="3" rows="4" columns="4">
 <features tabularvalignment="middle">
 <column alignment="center" valignment="top">
 <column alignment="center" valignment="top">
@@ -11076,6 +11426,18 @@ original
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
 0.810
 \end_layout
 
@@ -11086,6 +11448,18 @@ original
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.808
 \end_layout
 
 \end_inset
@@ -11095,6 +11469,18 @@ original
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.396
 \end_layout
 
 \end_inset
@@ -11126,6 +11512,18 @@ downsampling
 \begin_inset Text
 
 \begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
 0.809
 \end_layout
 
@@ -11136,6 +11534,18 @@ downsampling
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.737
 \end_layout
 
 \end_inset
@@ -11145,13 +11555,25 @@ downsampling
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.406
 \end_layout
 
 \end_inset
 </cell>
 </row>
 <row>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
 \begin_layout Plain Layout
@@ -11172,35 +11594,6 @@ upsampling
 
 \end_inset
 </cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-0.811
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\end_inset
-</cell>
-</row>
-<row>
 <cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
 \begin_inset Text
 
@@ -11217,16 +11610,7 @@ upsampling
 \uwave off
 \noun off
 \color none
-SMOTE
-\end_layout
-
-\end_inset
-</cell>
-<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
-\begin_inset Text
-
-\begin_layout Plain Layout
-NA
+0.811
 \end_layout
 
 \end_inset
@@ -11236,6 +11620,18 @@ NA
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.800
 \end_layout
 
 \end_inset
@@ -11245,6 +11641,18 @@ NA
 
 \begin_layout Plain Layout
 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+0.442
 \end_layout
 
 \end_inset
