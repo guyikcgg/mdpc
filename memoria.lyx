@@ -4149,7 +4149,7 @@ reference "fig:discretization-scatterplot"
  muestra los efectos de la discretización sobre cuatro variables que toman
  pocos valores enteros.
  Como puede observarse al comparar las densidades de puntos de cada clase
- en los dos disgramas de dispersión, los valores discretizados parecen recoger
+ en los dos diagramas de dispersión, los valores discretizados parecen recoger
  muy bien la esencia de las distribuciones originales.
 \end_layout
 
@@ -8025,7 +8025,7 @@ X15
 \family typewriter
 X34
 \family default
-) todas las métricas producen ressultados más bien pobres.
+) todas las métricas producen resultados más bien pobres.
 \end_layout
 
 \begin_layout Standard
@@ -8088,7 +8088,7 @@ findCorrelation
 caret
 \family default
  para eliminar aquellas columnas que presentan una fuerte correlación.
- De esta forma, hmos eliminado una variable de cada pareja de variables
+ De esta forma, hemos eliminado una variable de cada pareja de variables
  que presente una correlación mayor a 
 \begin_inset Formula $0.8$
 \end_inset
@@ -9794,7 +9794,7 @@ key "chawla2002smote"
 \end_inset
 
 .
- Esta técnica selecciona al azar una observación de la clase minoriataria.
+ Esta técnica selecciona al azar una observación de la clase minoritaria.
  A continuación, selecciona los 
 \begin_inset Formula $k$
 \end_inset
@@ -11016,8 +11016,8 @@ Las máquinas de soporte vectorial
 SVM
 \emph default
 ) son modelos de aprendizaje supervisado cuyo método de clasificación se
- basa en encontrar los hiperplanos que mejor separan las distintas clases.
- Estos hiperplanos se definen en espacios vectoriales de alta dimensionalidad,
+ basa en encontrar los hiper-planos que mejor separan las distintas clases.
+ Estos hiper-planos se definen en espacios vectoriales de alta dimensionalidad,
  cuyas componentes están relacionadas con los atributos de los datos y una
  función de kernel.
  Esta función facilita la separación de las clases al representar los distintos
@@ -12339,8 +12339,11 @@ Particionado y visualización de los datos
 \begin_deeper
 \begin_layout Description
 dataset-partitioning.R se encarga del particionado del conjunto de datos
- proporcionado en diez particiones o folds que serán usadas en el proceso
- de validación cruzada.
+ proporcionado en diez particiones o 
+\emph on
+folds
+\emph default
+ que serán usadas en el proceso de validación cruzada.
  Estas particiones son guardadas en disco con el fin de permitir la reproducibil
 idad.
  Adicionalmente, proporciona funciones para acceder a los datos de entrenamiento
@@ -12449,7 +12452,7 @@ mdpc-script.R es un script que ejecuta de forma secuencial cada uno de los
 \begin_layout Standard
 Cabe mencionar que cada uno de los scripts hace uso de variables globales
  que han sido generadas por los scripts anteriores.
- Por este motivo, los scripts deben ejectuarse de forma secuencial, en el
+ Por este motivo, los scripts deben ejecutarse de forma secuencial, en el
  orden descrito anteriormente.
  Los resultados obtenidos pueden verse afectados si estas variables globales
  son modificadas manualmente antes de ejecutar cualquiera de los scripts.
